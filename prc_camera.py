@@ -10,7 +10,7 @@ class Camera(esper.Processor):
     hres = Vec2d(800, 600)
     scale = 1
 
-    def __init__(self, resolution, pos=(500,000), target=None):
+    def __init__(self, resolution, pos=(100,100), target=None):
         Camera.pos = pos
         Camera.target = target
         Camera.hres = resolution / 2
@@ -48,6 +48,10 @@ class Camera(esper.Processor):
         wrld = Camera.to_world(screen)
         v = wrld - Camera.pos
         Camera.pos = Camera.pos - v * z_mul
+
+    @staticmethod
+    def set_target(body):
+        Camera.target = body
 
     @staticmethod
     def apply_transform():
