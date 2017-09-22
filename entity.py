@@ -14,6 +14,7 @@ from pymunk import Vec2d
 from prc_physics import PhysicsProcessor
 from prc_partciles import ParticleProcessor
 from prc_camera import Camera
+from prc_ui import UIProcessor
 
 from threading import *
 import time
@@ -40,18 +41,22 @@ def run(args=None):
     # Create some Processor instances, and asign them to be processed.
     render_processor = TextureRenderProcessor()
     part_processor = ParticleProcessor()
+    ui_processor = UIProcessor()
 
     world.add_processor(factory)
     world.add_processor(camera)
     world.add_processor(inp_processor) #input first
     world.add_processor(render_processor)
     world.add_processor(part_processor)
+    world.add_processor(ui_processor)
+    win_handler.add_ui_processor(ui_processor)
     world.add_processor(phys_processor) #phisics count last of all
     #world.add_processor(camera) funny effect
 
 
 
     #factory was added to processor so we can add come things into
+    ui_processor.load_ui()
     factory.createEnv()
     player = factory.createPlayer(Vec2d(100,100))
     enemy = factory.createEnemy(Vec2d(400,250))

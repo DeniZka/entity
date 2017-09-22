@@ -1,14 +1,17 @@
+import pyglet
 from pyglet.gl import *
 import esper
 from cmp_renderable import Renderable
 from pymunk import Vec2d
-from cmp_physics import Physics
-
 
 class TextureRenderProcessor(esper.Processor):
     def __init__(self):
         super().__init__()
         Renderable.batch = pyglet.graphics.Batch()
+        Renderable.bg = pyglet.graphics.OrderedGroup(0)
+        Renderable.mg = pyglet.graphics.OrderedGroup(1)
+        Renderable.fg = pyglet.graphics.OrderedGroup(2)
+        Renderable.ui = pyglet.graphics.OrderedGroup(3)
 
     def process(self, dt):
         # This will iterate over every Entity that has this Component, and

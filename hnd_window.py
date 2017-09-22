@@ -42,6 +42,9 @@ class WindowHandler(pyglet.window.Window):
         self.alive = True
         self.last_time = time.time()
 
+    def add_ui_processor(self, uip):
+        self.uip = uip
+
     def on_key_press(self, symbol, modifiers):
         if symbol == key.ESCAPE:
             pyglet.app.exit()
@@ -82,5 +85,8 @@ class WindowHandler(pyglet.window.Window):
         Renderable.batch.draw()
         Camera.restore_transform()
         #ui
+        if self.uip:
+            self.uip.draw()
         self.fps_display.draw()
+
 

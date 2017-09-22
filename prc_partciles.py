@@ -47,12 +47,12 @@ class ParticleProcessor(esper.Processor):
         self.world.add_component(prt, ParticleBehave(kind))
         self.world.add_component(prt, TempLive(2, 0.7))
         tex = pyglet.resource.image("cloud.png").get_texture()
-        rend = Renderable(tex, 60, 60)
+        rend = Renderable(tex, 60, 60, Renderable.fg)
         rend.sub_colors = [255, 100, 0, 255] * 4
         self.world.add_component(prt, rend)
 
         m = 0.01
-        r = 1.0
+        r = 10.0
         i = pymunk.moment_for_circle(m, 0, r, (0, 0))
         b = pymunk.Body(m, i)
         b.position = emtr.pos
@@ -63,7 +63,7 @@ class ParticleProcessor(esper.Processor):
         b.apply_impulse_at_world_point(force, emtr.pos)
 
         s = pymunk.Circle(b, r)
-        s.friction = 0.1
+        s.friction = 0.2
         s.elasticity = 0.0 #no bounce
         s.entity = prt
         s.filter = pymunk.ShapeFilter(0, Physics.cats["particles"], Physics.masks["particles"])

@@ -4,11 +4,18 @@ from pymunk import Vec2d
 
 class Renderable:
     batch = None #easy access to batch group from everywhere
+    bg = None
+    mg = None
+    fg = None
+    ui = None
 
-    def __init__(self, texture, width=0, height=0):
+    def __init__(self, texture, width=0, height=0, group=None):
         self.pos = Vec2d(0, 0)
         self.angle = 0
         self.texture = texture
+        parent = Renderable.mg
+        if group:
+            parent = group
         if width:
             self.w = width
         else:
@@ -17,7 +24,7 @@ class Renderable:
             self.h = height
         else:
             self.h = texture.height
-        self.group = TextureBindGroup(texture)
+        self.group = TextureBindGroup(texture, parent)
         self.vertex_list = None
         self._dirty = True
         self.colors = [255, 255, 255, 255] * 4
@@ -78,10 +85,11 @@ texture_enable_group = TextureEnableGroup()
 
 
 class TextureBindGroup(pyglet.graphics.Group):
-    def __init__(self, texture):
+    def __init__(self, texture, parent):
         super().__init__(parent=texture_enable_group)
         assert texture.target == GL_TEXTURE_2D
         self.texture = texture
+        self.parent = parent
         self.blend_src = GL_SRC_ALPHA
         self.blend_dest = GL_ONE_MINUS_SRC_ALPHA
 
