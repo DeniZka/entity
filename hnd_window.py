@@ -86,7 +86,7 @@ class WindowHandler(pyglet.window.Window):
         Camera.restore_transform()
         #ui
         if self.uip:
-            self.uip.draw()
+            Renderable.ui_batch.draw()
         self.fps_display.draw()
 
 

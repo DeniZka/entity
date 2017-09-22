@@ -39,19 +39,23 @@ class Physics:
     def __init__(self, body, shape, renderable=None, emiters=[]):
         self.body = body
         self.shape = shape
-        self.renderable = None
+        self.renderable = []
         if renderable:
-            self.renderable = renderable #for update them
-            self.renderable.pos = body.position
+            self.renderable.append(renderable) #for update them
+            self.renderable[-1].pos = body.position
         self.emiters = emiters #for update them
 
     def __del__(self):
         Physics.space.remove(self.body, self.shape) #remove self from world
 
+    def add_renderable(self, rend):
+        self.renderable.append(rend)
+
     def update_renderable(self):
-        if self.renderable:
-            self.renderable.pos = self.body.position
-            self.renderable.angle = self.body.angle
+        for r in self.renderable:
+            if r:
+                r.set_pos(self.body.position)
+                r.set_angle(self.body.angle)
 
     def add_emiter(self, emiter):
         self.emiters.append(emiter)

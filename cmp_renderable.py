@@ -4,6 +4,7 @@ from pymunk import Vec2d
 
 class Renderable:
     batch = None #easy access to batch group from everywhere
+    ui_batch = None
     bg = None
     mg = None
     fg = None
@@ -11,6 +12,7 @@ class Renderable:
 
     def __init__(self, texture, width=0, height=0, group=None):
         self.pos = Vec2d(0, 0)
+        self.pos_locked = False  #for UI which update noly angles
         self.angle = 0
         self.texture = texture
         parent = Renderable.mg
@@ -60,11 +62,21 @@ class Renderable:
         #TODO: SCALE
         return
 
+    def set_pos_lock(self, lock_st):
+        self.pos_locked = lock_st
+
     def set_sub_colors(self, colors):
         self.sub_colors = colors
         for i in range(16):
             self.colors[i] = int(self.sub_colors[i])
         self.sub_modif = True
+
+    def set_pos(self, vec):
+        if not self.pos_locked:
+            self.pos = vec
+
+    def set_angle(self, angle):
+        self.angle = angle
 
 
 

@@ -59,11 +59,12 @@ class Factory(esper.Processor):
         Physics.space.add(s, b)
         self.world.add_component(player, Physics(b, s, redsquare, emiters))
         #Camera update
-        #Camera.target = b
+        Camera.target = b
         #input
         self.world.add_component(player, Input(0))
         #weapon
         self.world.add_component(player, Cannon(1000))
+        self.player = player
 
         return player
 
@@ -101,6 +102,7 @@ class Factory(esper.Processor):
         self.world.add_component(enemy, Input(1))
         #hp
         self.world.add_component(enemy, Hp(5))
+        self.enemy = enemy
         return enemy
 
     def createBullet(self, pos, emitter):

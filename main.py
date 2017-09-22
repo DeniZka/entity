@@ -56,10 +56,12 @@ def run(args=None):
 
 
     #factory was added to processor so we can add come things into
-    ui_processor.load_ui()
     factory.createEnv()
     player = factory.createPlayer(Vec2d(100,100))
     enemy = factory.createEnemy(Vec2d(400,250))
+
+    ui_processor.load_ui() #last, cause of ui attaches to player and so on
+
 
     def update(dt):
         world.process(dt)

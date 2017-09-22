@@ -8,6 +8,7 @@ class TextureRenderProcessor(esper.Processor):
     def __init__(self):
         super().__init__()
         Renderable.batch = pyglet.graphics.Batch()
+        Renderable.ui_batch = pyglet.graphics.Batch()
         Renderable.bg = pyglet.graphics.OrderedGroup(0)
         Renderable.mg = pyglet.graphics.OrderedGroup(1)
         Renderable.fg = pyglet.graphics.OrderedGroup(2)
@@ -25,12 +26,25 @@ class TextureRenderProcessor(esper.Processor):
         texture = rend.texture
 
         if rend.vertex_list is None:
+            if rend.group.parent == Renderable.ui:
+                vertex_format = 'v2f/static'
+                vertex_format = 'v2f/stream'
+                rend.vertex_list = Renderable.ui_batch.add(
+                    4, GL_QUADS,
+                    rend.group,
+                    vertex_format, 'c4B/stream',
+                    ('t3f/static', texture.tex_coords)
+                )
+            else:
+                vertex_format = 'v2f/stream'
+                rend.vertex_list = Renderable.batch.add(
+                    4, GL_QUADS,
+                    rend.group,
+                    vertex_format, 'c4B/stream',
+                    ('t3f/static', texture.tex_coords)
+                )
 
-            vertex_format = 'v2f/stream'
-            rend.vertex_list = Renderable.batch.add(4, GL_QUADS,
-                                                    rend.group,
-                                                    vertex_format, 'c4B/stream',
-                                                    ('t3f/static', texture.tex_coords))
+
         if rend.sub_modif:
             rend.vertex_list.colors[:] = rend.colors
 
