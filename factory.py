@@ -19,11 +19,23 @@ class Factory(esper.Processor):
 
     def createEnv(self):
         self.environment = self.world.create_entity()  #first of all global entity for environment world
+
+        self.world.add_component(self.environment, Hp(100))
+        self.world.add_component(self.environment, Hp(200))
+        self.world.add_component(self.environment, Hp(300))
         lines = [
-            pymunk.Segment(Physics.space.static_body, Vec2d(0, 0), Vec2d(720, 0), 2),
+            pymunk.Segment(Physics.space.static_body, Vec2d(0, 0), Vec2d(7200, 0), 10),
             pymunk.Segment(Physics.space.static_body, Vec2d(0, 0), Vec2d(0, 480), 2),
-            pymunk.Segment(Physics.space.static_body, Vec2d(720, 0), Vec2d(720, 480), 2)
+            pymunk.Segment(Physics.space.static_body, Vec2d(720, 0), Vec2d(720, 480), 6)
         ]
+
+        base = Renderable(None, 7200, 20)
+        base.colors = [0, 200, 0, 255] * 4
+        base.pos = (7200/2, 0)
+
+
+
+        self.world.add_component(self.environment, base)
         for l in lines:
             l.friction = 0.5
             l.collision_type = Physics.coll_types["walls"]
@@ -38,6 +50,8 @@ class Factory(esper.Processor):
         hh = height/2
         redsquare = Renderable(texture=self.texture_from_image("ship.png"))
         redsquare.colors = [255,0,0,255] * 4
+        redsquare.colors[1] = 255
+        redsquare.colors[3] = 100
         self.world.add_component(player, redsquare)
         #engine emitter
         emiters = []
@@ -45,7 +59,7 @@ class Factory(esper.Processor):
         emiters.append(e)
         self.world.add_component(player, e)
         #physics
-        vs = [(-hw, hh), (hw, hh), (hw, -hh), (-hw, -hh)]
+        vs = [(0, hh), (hw, -hh), (-hw, -hh)]
         poly_mass = 10
         m = pymunk.moment_for_poly(poly_mass,vs,(0,0),0)
         b = pymunk.Body(poly_mass, m)
@@ -56,7 +70,6 @@ class Factory(esper.Processor):
         s.entity = player
         s.filter = pymunk.ShapeFilter(0, Physics.cats["player"], Physics.masks["player"])
         b.position = pos
-        Physics.space.add(s, b)
         self.world.add_component(player, Physics(b, s, redsquare, emiters))
         #Camera update
         Camera.target = b
@@ -96,12 +109,11 @@ class Factory(esper.Processor):
         s.filter = pymunk.ShapeFilter(0,Physics.cats["enemy"], Physics.masks["enemy"])
         b.position = pos
         b.angle=math.radians(30)
-        Physics.space.add(s, b)
         self.world.add_component(enemy, Physics(b, s, bluesquare, emiters))
         # input
         self.world.add_component(enemy, Input(1))
         #hp
-        self.world.add_component(enemy, Hp(5))
+        self.world.add_component(enemy, Hp(1))
         self.enemy = enemy
         return enemy
 
@@ -132,7 +144,6 @@ class Factory(esper.Processor):
         s.collision_type = Physics.coll_types["p_bullet"]
         s.entity = bullet
         s.filter = pymunk.ShapeFilter(0,Physics.cats["p_bullet"], Physics.masks["p_bullet"])
-        Physics.space.add(b,s)
         self.world.add_component(bullet, Physics(b,s, br))
         self.world.add_component(bullet, TempLive(0.5))
         return bullet
@@ -145,18 +156,24 @@ class Factory(esper.Processor):
         """Create a pyglet Texture from an image file"""
         return pyglet.resource.image(image_name).get_texture()
 
+    """
+
     def delete_entity(self, enity):
         if self.world.has_component(enity, Physics):
             phy = self.world.component_for_entity(enity, Physics)
             Physics.space.remove(phy.shape, phy.body)
             self.world.delete_entity(enity)
+    """
 
-    def process(self, dt):
-        #check died entity by ttl
+    def process(self, dt):         #check died entity by ttl
         #"""
         for ent, tl in self.world.get_component(TempLive):
             if not tl.alive(dt):
+#                if self.world.has_component(ent, Physics):
+#                    phy = self.world.component_for_entity(ent, Physics)
+#                    phy.remove(False)
                 self.world.delete_entity(ent)
 
 
         #"""
+        return

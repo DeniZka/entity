@@ -1,4 +1,6 @@
-class Input:
+from cmp import Component
+
+class Input(Component):
     inp_grps = 2
 
     inps = {  # active keys

@@ -1,8 +1,12 @@
 from pymunk import Vec2d
+from cmp import Component
 """
     IF Physics component will destroyed the renderable and emitter could be alive
 """
-class Physics:
+
+
+class Physics(Component):
+
     coll_types = { #to handle collision from types
         "player":   0,
         "enemy":    1,
@@ -36,6 +40,7 @@ class Physics:
     }
 
     space = None #easy access to pymunk space from everywhere
+
     def __init__(self, body, shape, renderable=None, emiters=[]):
         self.body = body
         self.shape = shape
@@ -44,9 +49,10 @@ class Physics:
             self.renderable.append(renderable) #for update them
             self.renderable[-1].pos = body.position
         self.emiters = emiters #for update them
+        Physics.space.add(self.body, self.shape)
 
-    def __del__(self):
-        Physics.space.remove(self.body, self.shape) #remove self from world
+    def on_remove (self, with_sprites=True):
+        Physics.space.remove(self.body, self.shape)  # remove self from world
 
     def add_renderable(self, rend):
         self.renderable.append(rend)

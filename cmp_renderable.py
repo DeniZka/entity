@@ -1,8 +1,9 @@
 from pyglet.gl import *
 from pymunk import Vec2d
+from cmp import Component
 
 
-class Renderable:
+class Renderable(Component):
     batch = None #easy access to batch group from everywhere
     ui_batch = None
     bg = None
@@ -10,7 +11,7 @@ class Renderable:
     fg = None
     ui = None
 
-    def __init__(self, texture, width=0, height=0, group=None):
+    def __init__(self, texture=None, width=0, height=0, group=None):
         self.pos = Vec2d(0, 0)
         self.pos_locked = False  #for UI which update noly angles
         self.angle = 0
@@ -26,14 +27,42 @@ class Renderable:
             self.h = height
         else:
             self.h = texture.height
-        self.group = TextureBindGroup(texture, parent)
+        if texture:
+            self.group = TextureBindGroup(texture, parent)
+        else:
+            self.group = Renderable.mg
         self.vertex_list = None
         self._dirty = True
         self.colors = [255, 255, 255, 255] * 4
         self.sub_colors = self.colors
-        self.sub_modif = True
+        self.sub_modif = True #support for smooth coloring in dt
 
-    def __del__(self):
+        if texture:
+            if self.group.parent == Renderable.ui:
+                vertex_format = 'v2f/stream'
+                self.vertex_list = Renderable.ui_batch.add(
+                    4, GL_QUADS,
+                    self.group,
+                    vertex_format, 'c4B/stream',
+                    ('t3f/static', texture.tex_coords)
+                )
+            else:
+                vertex_format = 'v2f/stream'
+                self.vertex_list = Renderable.batch.add(
+                    4, GL_QUADS,
+                    self.group,
+                    vertex_format, 'c4B/stream',
+                    ('t3f/static', texture.tex_coords)
+                )
+        else:  # textureless
+            vertex_format = 'v2f/stream'
+            self.vertex_list = Renderable.batch.add(
+                4, GL_QUADS,
+                self.group,
+                vertex_format, 'c4B/stream'
+            )
+
+    def on_remove(self):
         if self.vertex_list:
             self.vertex_list.delete()
 

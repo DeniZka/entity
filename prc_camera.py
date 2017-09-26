@@ -6,6 +6,7 @@ import math
 class Camera(esper.Processor):
     pos = Vec2d(0,0)
     target = None
+    use_target_angle = False
     angle = 0
     hres = Vec2d(800, 600)
     scale = 1
@@ -19,8 +20,16 @@ class Camera(esper.Processor):
     def process(self, dt):
         if Camera.target:
             Camera.pos = Camera.target.position
-            Camera.angle = Camera.target.angle
+            if Camera.use_target_angle:
+                Camera.angle = Camera.target.angle
         #TODO: cam can moove when target speed up
+
+    @staticmethod
+    def set_target(body):
+        Camera.target = body
+        Camera.pos = Camera.target.position
+        if Camera.use_target_angle:
+            Camera.angle = Camera.target.angle
 
     @staticmethod
     def to_world(screen):
@@ -39,15 +48,23 @@ class Camera(esper.Processor):
 
     @staticmethod
     def shift_to_mouse(screen, z_mul):
+        if Camera.target:
+            return
         wrld = Camera.to_world(screen)
         v = wrld - Camera.pos
         Camera.pos = Camera.pos + v * z_mul
 
     @staticmethod
     def shift_from_mouse(screen, z_mul):
+        if Camera.target:
+            return
         wrld = Camera.to_world(screen)
         v = wrld - Camera.pos
         Camera.pos = Camera.pos - v * z_mul
+
+    @staticmethod
+    def zoom_step(step):
+        Camera.scale = Camera.scale + Camera.scale * step
 
     @staticmethod
     def set_target(body):

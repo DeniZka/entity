@@ -26,7 +26,7 @@ class UIProcessor(esper.Processor):
         rend.pos = pos
         self.world.add_component(compass, rend)
         self.com_rend = rend
-
+        #self dir arrow
         arrow = self.world.create_entity()
         tex = pyglet.resource.image("arrow.png").get_texture(True)
         rend = Renderable(tex, group=Renderable.ui)
@@ -35,19 +35,36 @@ class UIProcessor(esper.Processor):
         rend.colors = [255, 0, 0, 255] * 4
         self.world.add_component(arrow, rend)
         self.p_rend = rend
-
+        #enemy pos dir arrow
         arrow = self.world.create_entity()
-        tex = pyglet.resource.image("arrow.png").get_texture(True)
+        tex = pyglet.resource.image("arrow_enemy.png").get_texture(True)
         rend = Renderable(tex, group=Renderable.ui)
         rend.pos = pos
         rend.set_pos_lock(True)
         rend.colors = [0, 0, 255, 255] * 4
         self.world.add_component(arrow, rend)
         self.e_rend = rend
+        #Selv velocity dir
+        arrow = self.world.create_entity()
+        tex = pyglet.resource.image("arrow.png").get_texture(True)
+        rend = Renderable(tex, group=Renderable.ui)
+        rend.pos = pos
+        rend.set_pos_lock(True)
+        rend.colors = [0, 255, 255, 255] * 4
+        self.world.add_component(arrow, rend)
+        self.v_rend = rend
 
     def process(self, dt):
         if self.pl_phy:
             self.p_rend.angle = self.pl_phy.body.angle - Camera.angle
+            l = self.pl_phy.body.velocity.length
+            if abs(l) > 0.1:
+                a = self.pl_phy.body.velocity.angle - Camera.angle
+                a -= math.pi/2
+                self.v_rend.angle = a
+                self.v_rend.h = 128
+            else:
+                self.v_rend.h = 0
         if self.en_phy:
             v = self.en_phy.body.position - self.pl_phy.body.position
             v.rotate(math.radians(-90))

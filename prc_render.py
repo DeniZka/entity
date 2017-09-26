@@ -25,24 +25,7 @@ class TextureRenderProcessor(esper.Processor):
     def draw_texture(self, rend, entity):
         texture = rend.texture
 
-        if rend.vertex_list is None:
-            if rend.group.parent == Renderable.ui:
-                vertex_format = 'v2f/static'
-                vertex_format = 'v2f/stream'
-                rend.vertex_list = Renderable.ui_batch.add(
-                    4, GL_QUADS,
-                    rend.group,
-                    vertex_format, 'c4B/stream',
-                    ('t3f/static', texture.tex_coords)
-                )
-            else:
-                vertex_format = 'v2f/stream'
-                rend.vertex_list = Renderable.batch.add(
-                    4, GL_QUADS,
-                    rend.group,
-                    vertex_format, 'c4B/stream',
-                    ('t3f/static', texture.tex_coords)
-                )
+
 
 
         if rend.sub_modif:

@@ -2,6 +2,7 @@ import pyglet
 from pyglet.gl import *
 
 import esper
+import ecs
 
 from cmp_renderable import Renderable
 from prc_render import TextureRenderProcessor
@@ -30,7 +31,8 @@ def run(args=None):
 
 
     # Initialize Esper world, and create a "player" Entity with a few Components.
-    world = esper.World()
+    #world = esper.World()
+    world = ecs.Ecs()
 
 
     factory = Factory()
@@ -44,13 +46,15 @@ def run(args=None):
     ui_processor = UIProcessor()
 
     world.add_processor(factory)
-    world.add_processor(camera)
     world.add_processor(inp_processor) #input first
-    world.add_processor(render_processor)
     world.add_processor(part_processor)
+    world.add_processor(phys_processor)
+    world.add_processor(camera) #after physiscs !
+    world.add_processor(render_processor) #after physiscs !
+
     world.add_processor(ui_processor)
     win_handler.add_ui_processor(ui_processor)
-    world.add_processor(phys_processor) #phisics count last of all
+
     #world.add_processor(camera) funny effect
 
 
@@ -58,7 +62,7 @@ def run(args=None):
     #factory was added to processor so we can add come things into
     factory.createEnv()
     player = factory.createPlayer(Vec2d(100,100))
-    enemy = factory.createEnemy(Vec2d(400,250))
+    enemy = factory.createEnemy(Vec2d(100,250))
 
     ui_processor.load_ui() #last, cause of ui attaches to player and so on
 

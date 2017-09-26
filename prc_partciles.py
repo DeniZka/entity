@@ -67,7 +67,6 @@ class ParticleProcessor(esper.Processor):
         s.elasticity = 0.0 #no bounce
         s.entity = prt
         s.filter = pymunk.ShapeFilter(0, Physics.cats["particles"], Physics.masks["particles"])
-        Physics.space.add(b, s)
         self.world.add_component(prt, Physics(b, s, rend))
 
     def iterateEngineParticle(self, dt, ent, rend, ttl):
@@ -80,7 +79,7 @@ class ParticleProcessor(esper.Processor):
         b = rend.sub_colors[2] + rnd * dt
         if b > 255:
             b = 255
-        rnd = random.randint(110, 170)
+        rnd = random.randint(90, 150)
         a = rend.sub_colors[3] - rnd * dt
         if a < 0:
             a = 0
