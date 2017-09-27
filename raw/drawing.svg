@@ -25,9 +25,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="7.9195959"
-     inkscape:cx="187.70261"
-     inkscape:cy="816.36445"
+     inkscape:zoom="5.6568543"
+     inkscape:cx="206.469"
+     inkscape:cy="818.79386"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -44,7 +44,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -104,5 +104,25 @@
        inkscape:transform-center-y="0.021724195"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90" />
+    <path
+       sodipodi:type="star"
+       style="opacity:1;fill:#343434;fill-opacity:1;stroke:none;stroke-width:3.79999995;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="path4139"
+       sodipodi:sides="3"
+       sodipodi:cx="273.24625"
+       sodipodi:cy="213.93559"
+       sodipodi:r1="5.5443482"
+       sodipodi:r2="2.7721741"
+       sodipodi:arg1="0.52359878"
+       sodipodi:arg2="1.5707963"
+       inkscape:flatsided="true"
+       inkscape:rounded="0"
+       inkscape:randomized="0"
+       d="m 278.04779,216.70777 -9.60309,0 4.80155,-8.31653 z"
+       inkscape:transform-center-y="1.3860898"
+       transform="matrix(-0.45432514,0,0,-1,419.01246,442.5184)"
+       inkscape:export-filename="/home/user/PycharmProjects/Entity/res/arrow_enemy.png"
+       inkscape:export-xdpi="247.54092"
+       inkscape:export-ydpi="247.54092" />
   </g>
 </svg>

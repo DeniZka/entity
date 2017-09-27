@@ -23,10 +23,12 @@ class InputProcessor(esper.Processor):
                 phy.body.force = fv
 
             if Input.inps['prop_lft'][inp.group]:
-                phy.body.torque = 20000
+                phy.body.torque = 14000
+            else:
+                phy.body.torque = 0
 
             if Input.inps['prop_rgh'][inp.group]:
-                phy.body.torque = -20000
+                phy.body.torque = -14000
 
             if Input.inps['fire'][inp.group] and self.world.has_component(ent, Cannon):
                 can = self.world.component_for_entity(ent, Cannon)

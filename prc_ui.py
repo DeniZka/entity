@@ -50,7 +50,8 @@ class UIProcessor(esper.Processor):
         rend = Renderable(tex, group=Renderable.ui)
         rend.pos = pos
         rend.set_pos_lock(True)
-        rend.colors = [0, 255, 255, 255] * 4
+        rend.colors = [0, 200, 75, 200] * 4
+        rend.w = rend.w * 0.5
         self.world.add_component(arrow, rend)
         self.v_rend = rend
 
@@ -58,7 +59,7 @@ class UIProcessor(esper.Processor):
         if self.pl_phy:
             self.p_rend.angle = self.pl_phy.body.angle - Camera.angle
             l = self.pl_phy.body.velocity.length
-            if abs(l) > 0.1:
+            if abs(l) > 0.5:
                 a = self.pl_phy.body.velocity.angle - Camera.angle
                 a -= math.pi/2
                 self.v_rend.angle = a
