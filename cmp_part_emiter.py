@@ -4,8 +4,9 @@ from cmp import Component
 """Pos and angle updates by body if emitter on it
 """
 
+
 class ParticleEmiter(Component):
-    p_limit = 0 #TODO: remove FIRST added over limit(FIFO). If not Destroyed
+    p_limit = 0  #TODO: remove FIRST added over limit(FIFO). If not Destroyed
     p_list = []
 
     def __init__(self, pos, angle, timeout, work=True):

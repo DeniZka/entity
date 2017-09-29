@@ -1,5 +1,6 @@
 from cmp import Component
 
+
 class Input(Component):
     inp_grps = 2
 
@@ -10,5 +11,6 @@ class Input(Component):
         'prop_rgh': {},
         'fire': {}
     }
+
     def __init__(self, group):
         self.group = group #for example two players on pc

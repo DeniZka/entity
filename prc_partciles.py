@@ -22,7 +22,9 @@ particle that has
     may be (or not) physics
 """
 
+
 class ParticleProcessor(Processor):
+
     def __init__(self):
         #self.particles = self.world.create_entity()
         return
@@ -40,7 +42,6 @@ class ParticleProcessor(Processor):
         for ent, (bhv, rend, ttl) in self.world.get_components(ParticleBehave, Renderable, TempLive):
             if bhv.kind == "Engine":
                 self.iterateEngineParticle(dt, ent, rend, ttl)
-
 
     def addEngineParticle(self, emtr, kind):
         prt = self.world.create_entity()

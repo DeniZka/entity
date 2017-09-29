@@ -6,7 +6,7 @@ import math
 from hnd_window import WindowHandler
 from factory import Factory
 from cmp_physics import Physics
-from prc_camera import Camera
+from prc_camera import CameraProcessor
 
 
 class UIProcessor(Processor):
@@ -78,11 +78,12 @@ class UIProcessor(Processor):
 
 
     def process(self, dt):
+        cam = self.world.get_processor(CameraProcessor)
         if self.pl_phy:
-            self.p_rend.angle = self.pl_phy.body.angle - Camera.angle
+            self.p_rend.angle = self.pl_phy.body.angle - cam.angle
             l = self.pl_phy.body.velocity.length
             if abs(l) > 0.5:
-                a = self.pl_phy.body.velocity.angle - Camera.angle
+                a = self.pl_phy.body.velocity.angle - cam.angle
                 a -= math.pi/2
                 self.v_rend.angle = a
                 self.v_rend.h = 128
@@ -93,8 +94,8 @@ class UIProcessor(Processor):
         if self.en_phy:
             v = self.en_phy.body.position - self.pl_phy.body.position
             v.rotate(math.radians(-90))
-            self.e_rend.angle = v.angle - Camera.angle
-        self.com_rend.angle = -Camera.angle
+            self.e_rend.angle = v.angle - cam.angle
+        self.com_rend.angle = -cam.angle
         return
 
     def draw(self):

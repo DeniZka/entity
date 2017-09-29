@@ -10,7 +10,6 @@ from cmp_cannon import  Cannon
 from cmp_temp_live import TempLive
 from cmp_hp import Hp
 from cmp_part_emiter import ParticleEmiter
-from prc_camera import Camera
 import math
 
 class Factory(Processor):
@@ -71,15 +70,13 @@ class Factory(Processor):
         s.filter = pymunk.ShapeFilter(0, Physics.cats["player"], Physics.masks["player"])
         b.position = pos
         self.world.add_component(player, Physics(b, s, redsquare, emiters))
-        #Camera update
-        Camera.target = b
         #input
         self.world.add_component(player, Input(0))
         #weapon
         self.world.add_component(player, Cannon(1000))
         self.player = player
 
-        return player
+        return player, b
 
 
     def createEnemy(self, pos):
@@ -115,7 +112,7 @@ class Factory(Processor):
         #hp
         self.world.add_component(enemy, Hp(1))
         self.enemy = enemy
-        return enemy
+        return enemy, b
 
     def createBullet(self, pos, emitter):
         bullet = self.world.create_entity()

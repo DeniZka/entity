@@ -1,5 +1,6 @@
 from cmp import Component
 
+
 class Cannon(Component):
     def __init__(self, max_timeout):
         self.max_timeout = max_timeout

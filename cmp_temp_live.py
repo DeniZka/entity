@@ -1,6 +1,7 @@
 import random
 from cmp import Component
 
+
 class TempLive(Component):
     TTL_INFINITY = 0
 

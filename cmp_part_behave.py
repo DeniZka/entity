@@ -1,5 +1,6 @@
 from cmp import Component
 
+
 class ParticleBehave(Component):
 
     def __init__(self, kind):
