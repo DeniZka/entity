@@ -62,6 +62,7 @@ class WindowHandler(pyglet.window.Window):
     def on_key_press(self, symbol, modifiers):
         if symbol == key.ESCAPE:
             pyglet.app.exit()
+            return
 
         for sub in self.win_subs["on_key_press"]:
             sub[1](symbol, modifiers)
@@ -72,6 +73,10 @@ class WindowHandler(pyglet.window.Window):
 
     def on_mouse_press(self, x, y, button, modifiers):
         for sub in self.win_subs["on_mouse_press"]:
+            sub[1](x, y, button, modifiers)
+
+    def on_mouse_release(self, x, y, button, modifiers):
+        for sub in self.win_subs["on_mouse_release"]:
             sub[1](x, y, button, modifiers)
 
     def on_mouse_scroll(self, x, y, scroll_x, scroll_y):

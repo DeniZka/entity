@@ -11,12 +11,14 @@ class Renderable(Component):
     fg = None
     ui = None
 
-    def __init__(self, texture=None, width=0, height=0, group=None):
+    def __init__(self, texture=None, width=0, height=0, group=None, type=GL_QUADS):
+        #TODO: REFACTORE THIS ADD LINES
         self.pos = Vec2d(0, 0)
         self.pos_locked = False  #for UI which update noly angles
         self.angle = 0
         self.texture = texture
         parent = Renderable.mg
+
         if group:
             parent = group
         if width:
@@ -36,31 +38,35 @@ class Renderable(Component):
         self.colors = [255, 255, 255, 255] * 4
         self.sub_colors = self.colors
         self.sub_modif = True #support for smooth coloring in dt
-
+        vertex_format = 'v2f/stream'
         if texture:
             if self.group.parent == Renderable.ui:
-                vertex_format = 'v2f/stream'
                 self.vertex_list = Renderable.ui_batch.add(
-                    4, GL_QUADS,
+                    4, type,
                     self.group,
                     vertex_format, 'c4B/stream',
                     ('t3f/static', texture.tex_coords)
                 )
             else:
-                vertex_format = 'v2f/stream'
                 self.vertex_list = Renderable.batch.add(
-                    4, GL_QUADS,
+                    4, type,
                     self.group,
                     vertex_format, 'c4B/stream',
                     ('t3f/static', texture.tex_coords)
                 )
         else:  # textureless
-            vertex_format = 'v2f/stream'
-            self.vertex_list = Renderable.batch.add(
-                4, GL_QUADS,
-                self.group,
-                vertex_format, 'c4B/stream'
-            )
+            if type == GL_QUADS:
+                self.vertex_list = Renderable.batch.add(
+                    4, type,
+                    self.group,
+                    vertex_format, 'c4B/stream'
+                )
+            else:
+                self.vertex_list = Renderable.batch.add(
+                    2, type,
+                    self.group,
+                    vertex_format, 'c4B/static'
+                )
 
     def on_remove(self):
         if self.vertex_list:

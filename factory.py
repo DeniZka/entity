@@ -11,6 +11,7 @@ from cmp_temp_live import TempLive
 from cmp_hp import Hp
 from cmp_part_emiter import ParticleEmiter
 import math
+from cmp_joint import Joint
 
 class Factory(Processor):
     def __init__(self):
@@ -144,6 +145,28 @@ class Factory(Processor):
         self.world.add_component(bullet, Physics(b,s, br))
         self.world.add_component(bullet, TempLive(0.5))
         return bullet
+
+
+    def create_joint(self, pos):
+        ent = self.world.create_entity()
+        # render comp
+        br = Renderable(self.texture_from_image("joint.png"), 10, 10)
+        br.colors = [255, 0, 0, 255] * 4
+        br.pos = pos
+        self.world.add_component(ent, br)
+        # joint
+        j = Joint()
+        self.world.add_component(ent, j)
+        return j
+
+    def create_segment(self, pos1, pos2):
+        ent = self.world.create_entity()
+        #rend com
+        base = Renderable()
+        base.colors = [200, 100, 0, 255] * 4
+        base.pos = (7200 / 2, 0)
+
+
 
 
 

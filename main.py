@@ -11,6 +11,7 @@ from prc_physics import PhysicsProcessor
 from prc_partciles import ParticleProcessor
 from prc_camera import CameraProcessor
 from prc_ui import UIProcessor
+from prc_editor import EditorProcessor
 
 def run(args=None):
     # pyglet graphics batch for efficient rendering
@@ -34,6 +35,8 @@ def run(args=None):
     render_processor = TextureRenderProcessor()
     part_processor = ParticleProcessor()
     ui_processor = UIProcessor()
+    edit_proc = EditorProcessor()
+
 
     world.add_processor(factory)
     world.add_processor(inp_processor) #input first
@@ -41,6 +44,7 @@ def run(args=None):
     world.add_processor(phys_processor)
     world.add_processor(render_processor) #after physiscs !
     world.add_processor(camera) #after physiscs !
+    world.add_processor(edit_proc)
 
     world.add_processor(ui_processor)
     win_handler.add_ui_processor(ui_processor)

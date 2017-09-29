@@ -36,6 +36,7 @@ class InputProcessor(Processor):
             self.world.win_hnd.subscribe("on_mouse_press", self.on_mouse_press)
             self.world.win_hnd.subscribe("on_mouse_scroll", self.on_mouse_scroll)
             self.world.win_hnd.subscribe("on_mouse_drag", self.on_mouse_drag)
+            self.world.win_hnd.subscribe("on_mouse_release", self.on_mouse_release)
 
     def on_remove(self):
         if self.world.win_hnd:
@@ -74,7 +75,16 @@ class InputProcessor(Processor):
 
     def on_mouse_press(self, x, y, button, modifiers):
         if button == 1:
+            v = self.cam.to_world(Vec2d(x,y))
+            #print(v)
+
+    def on_mouse_release(self, x, y, button, modifiers):
+        if button == 1:
             self.cam.to_world(Vec2d(x,y))
+
+    def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
+        if (buttons == 4):  # 1-left, 2-mid, 4-right
+            self.cam.drag(Vec2d(dx,dy))
 
     def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
         if scroll_y > 0: #zoom in
@@ -83,10 +93,6 @@ class InputProcessor(Processor):
         if scroll_y < 0: #zoom out
             self.cam.zoom_step(-self.zoom_mul)
             self.cam.shift_from_mouse(Vec2d(x, y), self.zoom_mul) #not in center
-
-    def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
-        if (buttons == 4):  # 1-left, 2-mid, 4-right
-            self.cam.drag(Vec2d(dx,dy))
 
     def process(self, dt):
         if not self.cam:
