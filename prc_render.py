@@ -1,10 +1,10 @@
-import pyglet
+from prc import Processor
 from pyglet.gl import *
 import esper
 from cmp_renderable import Renderable
 from pymunk import Vec2d
 
-class TextureRenderProcessor(esper.Processor):
+class TextureRenderProcessor(Processor):
     def __init__(self):
         super().__init__()
         Renderable.batch = pyglet.graphics.Batch()

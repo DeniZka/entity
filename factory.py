@@ -1,4 +1,4 @@
-import esper
+from prc import Processor
 import pyglet
 from cmp_renderable import Renderable
 import pymunk
@@ -13,7 +13,7 @@ from cmp_part_emiter import ParticleEmiter
 from prc_camera import Camera
 import math
 
-class Factory(esper.Processor):
+class Factory(Processor):
     def __init__(self):
         pyglet.resource.path = ['res']
 

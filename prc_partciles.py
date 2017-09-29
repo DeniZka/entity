@@ -1,4 +1,4 @@
-import esper
+from prc import Processor
 import pymunk
 from pymunk import Vec2d
 import random
@@ -22,7 +22,7 @@ particle that has
     may be (or not) physics
 """
 
-class ParticleProcessor(esper.Processor):
+class ParticleProcessor(Processor):
     def __init__(self):
         #self.particles = self.world.create_entity()
         return

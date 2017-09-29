@@ -1,9 +1,11 @@
-import esper
+from prc import Processor
 from pymunk import Vec2d
 from pyglet.gl import *
 import math
 
-class Camera(esper.Processor):
+
+class Camera(Processor):
+
     pos = Vec2d(0,0)
     target = None
     use_target_angle = False
@@ -23,6 +25,16 @@ class Camera(esper.Processor):
             if Camera.use_target_angle:
                 Camera.angle = Camera.target.angle
         #TODO: cam can moove when target speed up
+
+
+
+    @staticmethod
+    def on_resize(width, height):
+        Camera.hres = Vec2d(width/2, height/2)
+
+    @staticmethod
+    def resize(resolition):
+        Camera.hres = resolition/2
 
     @staticmethod
     def set_target(body):

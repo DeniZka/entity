@@ -33,6 +33,7 @@ def run(args=None):
     # Initialize Esper world, and create a "player" Entity with a few Components.
     #world = esper.World()
     world = ecs.Ecs()
+    world.win_hnd = win_handler
 
 
     factory = Factory()

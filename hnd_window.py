@@ -18,7 +18,10 @@ class WindowHandler(pyglet.window.Window):
     ZOOM_MUL = 0.1
 
     def __init__(self,  debug_draw=True):
-        super().__init__(width=WindowHandler.RESOLUTION[0], height=WindowHandler.RESOLUTION[1])
+        super().__init__(width=WindowHandler.RESOLUTION[0], height=WindowHandler.RESOLUTION[1],
+                         resizable=True)
+        self.win_subs = {}
+        self.sub_id = 0 #subscribers identifier
         BGCOLOR = (0.2, 0.2, 0.2, 1.0)
         pyglet.gl.glClearColor(*BGCOLOR)
         self.set_caption("Esper pyglet Example")
@@ -50,6 +53,30 @@ class WindowHandler(pyglet.window.Window):
         if debug_draw:
             self.opt = DrawOptions()
 #            self.opt.shape_static_color
+
+    def subscribe(self, method, cb_func):
+        self.sub_id += 1
+        if method in self.win_subs:
+            self.win_subs[method].append((self.sub_id, cb_func))
+        else:
+            self.win_subs[method] = [(self.sub_id, cb_func)]
+        return self.sub_id
+
+    def unsubscribe(self, method, id):
+        if method not in self.win_subs:
+            return
+
+        for i in range(len(self.win_subs[method])):
+            if self.win_subs[method][i][0] == id:
+                del self.win_subs[method][i]
+                return
+
+
+    def on_resize(self, width, height):
+        super().on_resize(width, height)
+        Camera.resize(Vec2d(width, height))
+        for sub in self.win_subs["on_resize"]:
+            sub[1](width, height)
 
     def add_ui_processor(self, uip):
         self.uip = uip
@@ -109,7 +136,8 @@ class WindowHandler(pyglet.window.Window):
         Camera.restore_transform()
         #ui
         if self.uip:
-            Renderable.ui_batch.draw()
+            self.uip.draw()
+
         self.fps_display.draw()
 
 

@@ -1,4 +1,4 @@
-import esper
+from prc import Processor
 import pymunk
 from pymunk import Vec2d
 from cmp_physics import Physics
@@ -6,13 +6,13 @@ from cmp_hp import Hp
 from prc_partciles import ParticleProcessor
 
 
-class PhysicsProcessor(esper.Processor):
+class PhysicsProcessor(Processor):
 
     def __init__(self):
         Physics.space = pymunk.Space()
-        Physics.space.gravity = Vec2d(0.0, -97.8)
+        Physics.space.gravity = Vec2d(0.0, 0.0)
         Physics.space.sleep_time_threshold = 0.3
-        Physics.space.damping = 0.8
+        Physics.space.damping = 0.5
         #collision handle
         ch = Physics.space.add_collision_handler(
             Physics.coll_types["p_bullet"],
