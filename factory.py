@@ -12,6 +12,9 @@ from cmp_hp import Hp
 from cmp_part_emiter import ParticleEmiter
 import math
 from cmp_joint import Joint
+import xml.etree.ElementTree as ET
+from cmp_segment import Segment
+from pyglet.gl import *
 
 class Factory(Processor):
     def __init__(self):
@@ -40,6 +43,68 @@ class Factory(Processor):
             l.friction = 0.5
             l.collision_type = Physics.coll_types["walls"]
         Physics.space.add(lines)
+
+        #load tracks
+        self.tree = ET.parse("res/Plymouth.rwm")
+        self.root = self.tree.getroot()
+        self.meta = self.root[0]
+        fn = "res/" + self.meta[1].attrib["File"]
+        Renderable.bg_image = pyglet.image.load(fn)
+        Renderable.bg_image.anchor_y = Renderable.bg_image.height
+        self.segs = self.root[1]
+        for seg in self.segs:
+            ent = self.world.create_entity()
+            v1 = v2 = Vec2d(0,0)
+            if seg.tag == "TrackSegment" or seg.tag == "HiddenSegment" or seg.tag == "Crossing"\
+                    or seg.tag == "LUSegment" or seg.tag == "EESegment":
+                begin = int(seg.attrib["Begin"])
+                end = int(seg.attrib["End"])
+                id = int(seg.attrib["ID"])
+                v1 = Vec2d(float(seg.attrib["X1"]), -float(seg.attrib["Y1"]))
+                v2 = Vec2d(float(seg.attrib["X2"]), -float(seg.attrib["Y2"]))
+
+                #replace with existing nodes
+                fnd_begin = False
+                fnd_end = False
+                for e, ss in self.world.get_component(Segment):
+                    if not fnd_begin:
+                        if v1.get_dist_sqrd(ss.pos1) < 1:
+                            v1 = ss.pos1
+                            fnd_begin = True
+                        if v1.get_dist_sqrd(ss.pos2) < 1:
+                            v1 = ss.pos2
+                            fnd_begin = True
+                    if not fnd_end:
+                        if v2.get_dist_sqrd(ss.pos1) < 1:
+                            v2 = ss.pos1
+                            fnd_end = True
+                        if v2.get_dist_sqrd(ss.pos2) < 1:
+                            v2 = ss.pos2
+                            fnd_end = True
+
+                    #both found
+                    if fnd_begin and fnd_end:
+                        break
+
+                s = Segment(id, v1, v2,  begin,  end, seg.tag)
+                self.world.add_component(ent, s)
+                br = Renderable(atype=GL_LINES)
+                if seg.tag == "TrackSegment":
+                    br.colors = [000, 200, 0, 255] * 2
+                elif seg.tag == "HiddenSegment":
+                    br.colors = [100, 100, 100, 255] * 2
+                elif seg.tag == "Crossing":
+                    br.colors = [200, 0, 0, 255] * 2
+                elif seg.tag == "LUSegment":
+                    br.colors = [200, 100, 0, 255] * 2
+                elif seg.tag == "EESegment":
+                    br.colors = [200, 0, 200, 255] * 2
+                br.pos = v1
+                br.pos2 = v2
+                self.world.add_component(ent, br)
+            #elif seg.tag == ""
+
+
         return self.environment
 
     def createPlayer(self, pos):
@@ -159,12 +224,25 @@ class Factory(Processor):
         self.world.add_component(ent, j)
         return j
 
-    def create_segment(self, pos1, pos2):
+    def create_segment(self, pos):
         ent = self.world.create_entity()
-        #rend com
-        base = Renderable()
-        base.colors = [200, 100, 0, 255] * 4
-        base.pos = (7200 / 2, 0)
+
+        v1 = Vec2d(pos)
+        s = Segment(
+            Segment.next_id,
+            v1,
+            pos,
+            -1,
+            -1
+        )
+        Segment.next_id += 1
+        self.world.add_component(ent, s)
+
+        br = Renderable(atype=GL_LINES)
+        br.colors = [200, 100, 0, 255] * 2
+        br.pos = v1
+        br.pos2 = pos
+        self.world.add_component(ent, br)
 
 
 

@@ -10,6 +10,7 @@ class PhysicsProcessor(Processor):
 
     def __init__(self):
         Physics.space = pymunk.Space()
+        Physics.space.iterations = 5
         Physics.space.gravity = Vec2d(0.0, 0.0)
         Physics.space.sleep_time_threshold = 0.3
         Physics.space.damping = 0.5

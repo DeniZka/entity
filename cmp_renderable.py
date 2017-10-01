@@ -1,4 +1,5 @@
 from pyglet.gl import *
+from pyglet.sprite import Sprite
 from pymunk import Vec2d
 from cmp import Component
 
@@ -10,10 +11,13 @@ class Renderable(Component):
     mg = None
     fg = None
     ui = None
+    bg_image = None
 
-    def __init__(self, texture=None, width=0, height=0, group=None, type=GL_QUADS):
+    def __init__(self, texture=None, width=0, height=0, group=None, atype=GL_QUADS):
+        #self.sprite = Sprite(texture, 0,0,)
         #TODO: REFACTORE THIS ADD LINES
         self.pos = Vec2d(0, 0)
+        self.pos2 = None  # for lines that has two points
         self.pos_locked = False  #for UI which update noly angles
         self.angle = 0
         self.texture = texture
@@ -23,11 +27,11 @@ class Renderable(Component):
             parent = group
         if width:
             self.w = width
-        else:
+        elif texture:
             self.w = texture.width
         if height:
             self.h = height
-        else:
+        elif texture:
             self.h = texture.height
         if texture:
             self.group = TextureBindGroup(texture, parent)
@@ -42,28 +46,28 @@ class Renderable(Component):
         if texture:
             if self.group.parent == Renderable.ui:
                 self.vertex_list = Renderable.ui_batch.add(
-                    4, type,
+                    4, atype,
                     self.group,
                     vertex_format, 'c4B/stream',
                     ('t3f/static', texture.tex_coords)
                 )
             else:
                 self.vertex_list = Renderable.batch.add(
-                    4, type,
+                    4, atype,
                     self.group,
                     vertex_format, 'c4B/stream',
                     ('t3f/static', texture.tex_coords)
                 )
         else:  # textureless
-            if type == GL_QUADS:
+            if atype == GL_QUADS:
                 self.vertex_list = Renderable.batch.add(
-                    4, type,
+                    4, atype,
                     self.group,
                     vertex_format, 'c4B/stream'
                 )
             else:
                 self.vertex_list = Renderable.batch.add(
-                    2, type,
+                    2, atype,
                     self.group,
                     vertex_format, 'c4B/static'
                 )

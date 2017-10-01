@@ -48,21 +48,26 @@ class TextureRenderProcessor(Processor):
         if rend.sub_modif:
             rend.vertex_list.colors[:] = rend.colors
 
-        hw = rend.w * 0.5
-        hh = rend.h * 0.5
-        v1 = Vec2d(-hw, -hh)
-        v1.rotate(rend.angle)
-        v1 += rend.pos
-        v2 = Vec2d( hw, -hh)
-        v2.rotate(rend.angle)
-        v2 += rend.pos
-        v3 = Vec2d(hw, hh)
-        v3.rotate(rend.angle)
-        v3 += rend.pos
-        v4 = Vec2d(-hw, hh)
-        v4.rotate(rend.angle)
-        v4 += rend.pos
-        rend.vertex_list.vertices[:] = [v1.x, v1.y, v2.x, v2.y, v3.x, v3.y, v4.x, v4.y]
+        if rend.pos2: #lines
+            v1 = rend.pos
+            v2 = rend.pos2
+            rend.vertex_list.vertices[:] = [v1.x, v1.y, v2.x, v2.y]
+        else: #quads and with textures
+            hw = rend.w * 0.5
+            hh = rend.h * 0.5
+            v1 = Vec2d(-hw, -hh)
+            v1.rotate(rend.angle)
+            v1 += rend.pos
+            v2 = Vec2d( hw, -hh)
+            v2.rotate(rend.angle)
+            v2 += rend.pos
+            v3 = Vec2d(hw, hh)
+            v3.rotate(rend.angle)
+            v3 += rend.pos
+            v4 = Vec2d(-hw, hh)
+            v4.rotate(rend.angle)
+            v4 += rend.pos
+            rend.vertex_list.vertices[:] = [v1.x, v1.y, v2.x, v2.y, v3.x, v3.y, v4.x, v4.y]
 
     def on_draw(self):
         if not self.cam:
@@ -71,6 +76,8 @@ class TextureRenderProcessor(Processor):
         self.cam.apply_transform()
         if self.debug_draw:
             Physics.space.debug_draw(self.opt)
+        if Renderable.bg_image:
+            Renderable.bg_image.blit(0, 0, 0)
         Renderable.batch.draw()
 
         self.cam.restore_transform()

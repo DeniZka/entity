@@ -1,5 +1,6 @@
 from prc import Processor
 from cmp_joint import Joint
+from cmp_segment import Segment
 from cmp_renderable import Renderable
 from prc_camera import CameraProcessor
 from pymunk import Vec2d
@@ -10,10 +11,10 @@ class EditorProcessor(Processor):
 
     def __init__(self):
         self.subscribed = False
-        self.sq_sense_rad = 10 * 10
+        self.sq_sense_rad = 10
         self.cam = None
+        self.picked = None
         return
-
 
     def on_add(self):
         self.world.win_hnd.subscribe("on_mouse_press", self.on_mouse_press)
@@ -21,11 +22,13 @@ class EditorProcessor(Processor):
         self.world.win_hnd.subscribe("on_mouse_release", self.on_mouse_release)
 
     def in_target(self, tgt, pick):
-        r = tgt - pick
+        r = tgt.pos1 - pick
         if r.get_length_sqrd() < self.sq_sense_rad:
-            return True
-        else:
-            return False
+            return tgt.pos1
+        r = tgt.pos2 - pick
+        if r.get_length_sqrd() < self.sq_sense_rad:
+            return tgt.pos2
+        return None
 
     def on_mouse_press(self, x, y, button, modifiers):
         if not self.cam:
@@ -34,42 +37,35 @@ class EditorProcessor(Processor):
             v = self.cam.to_world(Vec2d(x, y))
             factory = self.world.get_processor(Factory)
             found = False
-            for ent, (jnt, rend) in self.world.get_components(Joint, Renderable):
-                if self.in_target(rend.pos, v):
-                    jnt.on_mouse = True
+            for ent, (seg, rend) in self.world.get_components(Segment, Renderable):
+                self.picked =  self.in_target(seg, v)
+                if self.picked:
                     found = True
                     break
 
             if not found:
-                j = factory.create_joint(v)
-                j = factory.create_joint(v)
-                j.on_mouse = True
-
-
-        #pick a part
-        #if no part add 1: start joint, 2:mid, 3:end, 4:line
-        #if part - attach start point
-        return
-
-    def on_mouse_release(self, x, y, button, modifiers):
-        if not self.cam:
-            self.cam = self.world.get_processor(CameraProcessor)
-        if button == 1:
-            for ent, (jnt, rend) in self.world.get_components(Joint, Renderable):
-                if jnt.on_mouse:
-                    jnt.on_mouse = False
-                    break
-
+                factory.create_segment(v)
+                self.picked = v
 
     def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
-        if not self.cam:
-            self.cam = self.world.get_processor(CameraProcessor)
-#        if (buttons == 4):  # 1-left, 2-mid, 4-right
-        if buttons == 1:
-            for ent, (jnt, rend) in self.world.get_components(Joint, Renderable):
-                if jnt.on_mouse:
-                    v = self.cam.to_world(Vec2d(x, y))
-                    rend.pos = v
+        if self.picked:
+            w = self.cam.to_world(Vec2d(x, y))
+            self.picked.x = w.x
+            self.picked.y = w.y
+
+    def on_mouse_release(self, x, y, button, modifiers):
+        self.picked = None
+        #TODO; merge with existing (and IS not self)
+        """
+        v = self.cam.to_world(Vec2d(x, y))
+        for ent, (seg, rend) in self.world.get_components(Segment, Renderable):
+            
+            tgtv = self.in_target(seg, v)
+            if tgtv:
+               if tgtv == seg.pos1 and self.picked is not seg.pos1:
+                seg
+                self
+        """
 
     def process(self, dt):
         return

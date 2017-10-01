@@ -65,7 +65,7 @@ def run(args=None):
     def update(dt):
         world.process(dt)
 
-    pyglet.clock.schedule_interval(update, 1.0 / (WindowHandler.FPS*2))
+    pyglet.clock.schedule_interval(update, 1.0 / (WindowHandler.FPS*3))
     pyglet.app.run()
 
 if __name__ == "__main__":
