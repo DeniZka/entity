@@ -29,22 +29,22 @@ class InputProcessor(Processor):
         self.zoom_mul = 0.1
         return
 
-    def on_add(self):
-        if self.world.win_hnd:
+    def on_add(self, proc):
+        if proc == self and self.world.win_hnd:
+            self.cam = self.world.get_processor(CameraProcessor)
             self.sub_id = self.world.win_hnd.subscribe("on_key_press", self.on_key_press)
             self.world.win_hnd.subscribe("on_key_release", self.on_key_release)
             self.world.win_hnd.subscribe("on_mouse_press", self.on_mouse_press)
             self.world.win_hnd.subscribe("on_mouse_scroll", self.on_mouse_scroll)
             self.world.win_hnd.subscribe("on_mouse_drag", self.on_mouse_drag)
             self.world.win_hnd.subscribe("on_mouse_release", self.on_mouse_release)
+        if proc.__class__ is CameraProcessor:
+            self.cam = proc
 
     def on_remove(self):
         if self.world.win_hnd:
             self.world.win_hnd.unsubscribe("on_key_press", self.sub_id)
         #TODO: UNSUBSCRIBE
-
-    def get_cam(self):
-        self.cam = self.world.get_processor(CameraProcessor)
 
     def on_key_press(self, symbol, modifiers):
         if symbol == key.DELETE:
@@ -95,9 +95,6 @@ class InputProcessor(Processor):
             self.cam.shift_from_mouse(Vec2d(x, y), self.zoom_mul) #not in center
 
     def process(self, dt):
-        if not self.cam:
-            self.get_cam()
-
         for ent, (inp, phy) in self.world.get_components(Input, Physics):
             if Input.inps['throttle'][inp.group]:
                 fv = Vec2d(0, 2100)

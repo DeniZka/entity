@@ -11,17 +11,24 @@ from prc_camera import CameraProcessor
 
 class UIProcessor(Processor):
     def __init__(self):
+        self.cam = None
         return
 
-    def on_add(self):
-        if self.world.win_hnd:
+    def on_add(self, proc):
+        return
+        if proc == self and self.world.win_hnd:
+            self.cam = self.world.get_processor(CameraProcessor)
             self.sub_id = self.world.win_hnd.subscribe("on_resize", self.on_win_resize)
+        if proc.__class__ is CameraProcessor:
+            self.cam = proc
 
     def on_remove(self):
+        return
         if self.world.win_hnd:
             self.world.win_hnd.unsubscribe("on_resize", self.sub_id)
 
     def on_win_resize(self, width, height):
+        return
         self.compass_pos.x = width - 64
         self.compass_pos.y = height - 64
 
@@ -29,6 +36,7 @@ class UIProcessor(Processor):
         self.vel.y = height - 150
 
     def load_ui(self):
+        return
         pfct = self.world.get_processor(Factory)
         self.pl_phy = self.world.component_for_entity(pfct.player, Physics)
         self.en_phy = self.world.component_for_entity(pfct.enemy, Physics)
@@ -78,12 +86,12 @@ class UIProcessor(Processor):
 
 
     def process(self, dt):
-        cam = self.world.get_processor(CameraProcessor)
+        return
         if self.pl_phy:
-            self.p_rend.angle = self.pl_phy.body.angle - cam.angle
+            self.p_rend.angle = self.pl_phy.body.angle - self.cam.angle
             l = self.pl_phy.body.velocity.length
             if abs(l) > 0.5:
-                a = self.pl_phy.body.velocity.angle - cam.angle
+                a = self.pl_phy.body.velocity.angle - self.cam.angle
                 a -= math.pi/2
                 self.v_rend.angle = a
                 self.v_rend.h = 128
@@ -94,10 +102,11 @@ class UIProcessor(Processor):
         if self.en_phy:
             v = self.en_phy.body.position - self.pl_phy.body.position
             v.rotate(math.radians(-90))
-            self.e_rend.angle = v.angle - cam.angle
-        self.com_rend.angle = -cam.angle
+            self.e_rend.angle = v.angle - self.cam.angle
+        self.com_rend.angle = -self.cam.angle
         return
 
     def draw(self):
+        return
         Renderable.ui_batch.draw()
         self.vel.draw()

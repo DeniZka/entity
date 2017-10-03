@@ -48,7 +48,7 @@ class ParticleProcessor(Processor):
         self.world.add_component(prt, ParticleBehave(kind))
         self.world.add_component(prt, TempLive(2, 0.7))
         tex = pyglet.resource.image("cloud.png").get_texture()
-        rend = Renderable(tex, 60, 60, Renderable.fg)
+        rend = Renderable(tex, 60, 60, group=Renderable.fg)
         rend.sub_colors = [255, 100, 0, 255] * 4
         self.world.add_component(prt, rend)
 

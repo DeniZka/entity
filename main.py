@@ -54,10 +54,11 @@ def run(args=None):
 
 
     #factory was added to processor so we can add come things into
+    factory.testing()
     factory.createEnv()
-    player = factory.createPlayer(Vec2d(100,100))
-    camera.target = player[1]
-    enemy = factory.createEnemy(Vec2d(100,250))
+    #player = factory.createPlayer(Vec2d(100,100))
+    #camera.target = player[1]
+    #enemy = factory.createEnemy(Vec2d(100,250))
 
     ui_processor.load_ui() #last, cause of ui attaches to player and so on
 
@@ -65,7 +66,7 @@ def run(args=None):
     def update(dt):
         world.process(dt)
 
-    pyglet.clock.schedule_interval(update, 1.0 / (WindowHandler.FPS*3))
+    pyglet.clock.schedule_interval(update, 1.0 / (WindowHandler.FPS*2))
     pyglet.app.run()
 
 if __name__ == "__main__":

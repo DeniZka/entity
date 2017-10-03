@@ -29,8 +29,8 @@ class CameraProcessor(Processor):
                 self.angle = self.target.angle
         #TODO: cam can moove when target speed up
 
-    def on_add(self):
-        if self.world.win_hnd:
+    def on_add(self, proc):
+        if proc == self and self.world.win_hnd:
             self.sub_id = self.world.win_hnd.subscribe("on_resize", self.on_win_resize)
 
     def on_remove(self):

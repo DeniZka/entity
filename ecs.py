@@ -18,6 +18,11 @@ class Ecs(esper.World):
     callback for Processors for subscription actions
     """
     def add_processor(self, processor_instance, priority=0):
+        #every on must know about new one
+        for prc in self._processors:
+            prc.on_add(processor_instance)
+        #add new one
         super().add_processor(processor_instance, priority)
-        processor_instance.on_add()
+        #tell new one tahat he added
+        processor_instance.on_add(processor_instance)
 

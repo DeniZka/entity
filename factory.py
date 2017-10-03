@@ -1,6 +1,8 @@
 from prc import Processor
 import pyglet
+from cmp_transform import Transform
 from cmp_renderable import Renderable
+from cmp_renderables import Renderables
 import pymunk
 from cmp_physics import Physics
 import math
@@ -20,25 +22,33 @@ class Factory(Processor):
     def __init__(self):
         pyglet.resource.path = ['res']
 
+    def joint_mod_colors(self, rend):
+        #became two way
+        if rend.colors[0] == 255:
+            rend.colors = [0, 255, 0, 255] * 4
+            return
+        #became threeway
+        if rend.colors[1] == 255:
+            rend.colors = [0, 0, 255, 255] * 4
+            return
+        #became four way
+        if rend.colors[2] == 255:
+            rend.colors = [254, 0, 255, 255] * 4
+            return
+
     def createEnv(self):
         self.environment = self.world.create_entity()  #first of all global entity for environment world
-
-        self.world.add_component(self.environment, Hp(100))
-        self.world.add_component(self.environment, Hp(200))
-        self.world.add_component(self.environment, Hp(300))
         lines = [
             pymunk.Segment(Physics.space.static_body, Vec2d(0, 0), Vec2d(7200, 0), 10),
             pymunk.Segment(Physics.space.static_body, Vec2d(0, 0), Vec2d(0, 480), 2),
             pymunk.Segment(Physics.space.static_body, Vec2d(720, 0), Vec2d(720, 480), 6)
         ]
 
-        base = Renderable(None, 7200, 20)
+        self.world.add_component(self.environment, Transform(Vec2d(7200/2, 0), 7200, 20))
+        base = Renderable()
         base.colors = [0, 200, 0, 255] * 4
-        base.pos = (7200/2, 0)
-
-
-
         self.world.add_component(self.environment, base)
+
         for l in lines:
             l.friction = 0.5
             l.collision_type = Physics.coll_types["walls"]
@@ -53,33 +63,35 @@ class Factory(Processor):
         Renderable.bg_image.anchor_y = Renderable.bg_image.height
         self.segs = self.root[1]
         for seg in self.segs:
-            ent = self.world.create_entity()
-            v1 = v2 = Vec2d(0,0)
             if seg.tag == "TrackSegment" or seg.tag == "HiddenSegment" or seg.tag == "Crossing"\
                     or seg.tag == "LUSegment" or seg.tag == "EESegment":
+
+                ent = self.world.create_entity()
+                v1 = v2 = Vec2d(0, 0)
+
                 begin = int(seg.attrib["Begin"])
                 end = int(seg.attrib["End"])
-                id = int(seg.attrib["ID"])
+                id = ent #int(seg.attrib["ID"])
                 v1 = Vec2d(float(seg.attrib["X1"]), -float(seg.attrib["Y1"]))
                 v2 = Vec2d(float(seg.attrib["X2"]), -float(seg.attrib["Y2"]))
 
                 #replace with existing nodes
                 fnd_begin = False
                 fnd_end = False
-                for e, ss in self.world.get_component(Segment):
+                for e, (j, rends) in self.world.get_components(Joint, Renderables):
                     if not fnd_begin:
-                        if v1.get_dist_sqrd(ss.pos1) < 1:
-                            v1 = ss.pos1
-                            fnd_begin = True
-                        if v1.get_dist_sqrd(ss.pos2) < 1:
-                            v1 = ss.pos2
+                        if v1.get_dist_sqrd(j.pos) < 1:
+                            v1 = j.pos
+                            ways = j.attach(id)
+#                            if ways == 3:
+#                                self.switch_rend(j,)
+                            self.joint_mod_colors(rends.renderable[0])
                             fnd_begin = True
                     if not fnd_end:
-                        if v2.get_dist_sqrd(ss.pos1) < 1:
-                            v2 = ss.pos1
-                            fnd_end = True
-                        if v2.get_dist_sqrd(ss.pos2) < 1:
-                            v2 = ss.pos2
+                        if v2.get_dist_sqrd(j.pos) < 1:
+                            v2 = j.pos
+                            ways = j.attach(id)
+                            self.joint_mod_colors(rends.renderable[0])
                             fnd_end = True
 
                     #both found
@@ -88,6 +100,33 @@ class Factory(Processor):
 
                 s = Segment(id, v1, v2,  begin,  end, seg.tag)
                 self.world.add_component(ent, s)
+
+                # create node circle
+                if not fnd_begin:
+                    jent = self.world.create_entity()
+                    j = Joint(jent, v1, id)
+                    self.world.add_component(jent, j)
+                    #transform
+                    self.world.add_component(jent, Transform(v1, 5, 5))
+                    #switch circle
+                    r = Renderable(self.texture_from_image("joint.png"))
+                    r.colors = [255, 0, 0, 255] * 4
+                    rs = Renderables(r)
+                    self.world.add_component(jent, rs)
+                if not fnd_end:
+                    jent = self.world.create_entity()
+                    j = Joint(jent, v2, id)
+                    self.world.add_component(jent, j)
+                    self.world.add_component(jent, Transform(v2, 5, 5))
+                    r = Renderable(self.texture_from_image("joint.png"))
+                    r.colors = [255, 0, 0, 255] * 4
+                    rs = Renderables(r)
+                    self.world.add_component(jent, rs)
+
+                #create segment line
+                tr = Transform(v1)
+                tr._pos[1] = v2
+                self.world.add_component(ent, tr)
                 br = Renderable(atype=GL_LINES)
                 if seg.tag == "TrackSegment":
                     br.colors = [000, 200, 0, 255] * 2
@@ -99,13 +138,16 @@ class Factory(Processor):
                     br.colors = [200, 100, 0, 255] * 2
                 elif seg.tag == "EESegment":
                     br.colors = [200, 0, 200, 255] * 2
-                br.pos = v1
-                br.pos2 = v2
                 self.world.add_component(ent, br)
-            #elif seg.tag == ""
 
-
+            #elif seg.tag == "Switch":
         return self.environment
+
+    def testing(self):
+        #ent = self.world.create_entity()
+        #rends = Renderables();
+        #self.world.add_component(ent, rends)
+        return
 
     def createPlayer(self, pos):
         player = self.world.create_entity()
@@ -238,11 +280,10 @@ class Factory(Processor):
         Segment.next_id += 1
         self.world.add_component(ent, s)
 
-        br = Renderable(atype=GL_LINES)
+        br = Renderable(atype=GL_LINES, pos=v1, pos2=pos)
         br.colors = [200, 100, 0, 255] * 2
-        br.pos = v1
-        br.pos2 = pos
         self.world.add_component(ent, br)
+        return br
 
 
 

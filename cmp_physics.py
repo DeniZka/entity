@@ -60,8 +60,8 @@ class Physics(Component):
     def update_renderable(self):
         for r in self.renderable:
             if r:
-                r.set_pos(self.body.position)
-                r.set_angle(self.body.angle)
+                r.pos = self.body.position
+                r.angle = self.body.angle
 
     def add_emiter(self, emiter):
         self.emiters.append(emiter)

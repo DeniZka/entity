@@ -2,7 +2,7 @@ from pyglet.gl import *
 from pyglet.sprite import Sprite
 from pymunk import Vec2d
 from cmp import Component
-
+#TODO: GRAPHICS IS NOT MOVING CAUSE OF POS prop is not calling
 
 class Renderable(Component):
     batch = None #easy access to batch group from everywhere
@@ -13,32 +13,19 @@ class Renderable(Component):
     ui = None
     bg_image = None
 
-    def __init__(self, texture=None, width=0, height=0, group=None, atype=GL_QUADS):
-        #self.sprite = Sprite(texture, 0,0,)
+    def __init__(self, texture=None, group=None, atype=GL_QUADS):
         #TODO: REFACTORE THIS ADD LINES
-        self.pos = Vec2d(0, 0)
-        self.pos2 = None  # for lines that has two points
-        self.pos_locked = False  #for UI which update noly angles
-        self.angle = 0
         self.texture = texture
+        self.vertex_list = None
+        self.atype = atype
         parent = Renderable.mg
-
         if group:
             parent = group
-        if width:
-            self.w = width
-        elif texture:
-            self.w = texture.width
-        if height:
-            self.h = height
-        elif texture:
-            self.h = texture.height
         if texture:
             self.group = TextureBindGroup(texture, parent)
         else:
             self.group = Renderable.mg
         self.vertex_list = None
-        self._dirty = True
         self.colors = [255, 255, 255, 255] * 4
         self.sub_colors = self.colors
         self.sub_modif = True #support for smooth coloring in dt
@@ -76,31 +63,6 @@ class Renderable(Component):
         if self.vertex_list:
             self.vertex_list.delete()
 
-    @property
-    def x(self):
-        return self._x
-
-    @x.setter
-    def x(self, val):
-        if val != self._x:
-            self._x = val
-            self._dirty = True
-
-    @property
-    def y(self):
-        return self._y
-
-    @y.setter
-    def y(self, val):
-        if val != self._y:
-            self._y = val
-            self._dirty = True
-
-
-    def scale(self, vec):
-        #TODO: SCALE
-        return
-
     def set_pos_lock(self, lock_st):
         self.pos_locked = lock_st
 
@@ -109,15 +71,6 @@ class Renderable(Component):
         for i in range(16):
             self.colors[i] = int(self.sub_colors[i])
         self.sub_modif = True
-
-    def set_pos(self, vec):
-        if not self.pos_locked:
-            self.pos = vec
-
-    def set_angle(self, angle):
-        self.angle = angle
-
-
 
 # Code below cobbled together from
 # https://pyglet.readthedocs.org/en/latest/programming_guide/graphics.html#hierarchical-state
