@@ -31,34 +31,47 @@ class Transform(Component):
         self._scale = Vec2d(0, 0)
         self.pre_scale = Vec2d(0, 0)
 
-    def pos_modified(self):
-        if self.pos[0] != self.pre_pos:
-            return True
-        else:
-            return False
+        self.modified = True # need to redraw
+        self.drag_id = 0 #id of default modificable vector
 
-    def angle_modified(self):
-        if self.angle != self.pre_angle:
-            return True
-        else:
-            return False
+    def other_point(self, val):
+        """
+        Try to find another end of segment if param is the one of ther side
+        :param val: one of the segment point
+        :return: other point or nothing
+        """
+        if val == self._pos[0]:
+            return self._pos[1]
+        if val == self._pos[1]:
+            return self._pos[0]
+        return None
 
-    def scale_modified(self):
-        if self.scale != self.pre_scale:
-            return True
-        else:
-            return False
+    def pick_pt_drag_id(self, val):
+        """
+        swap default moveable pos vector if it posible
+        :param val: vector to set as movable
+        """
+        for i in range(4):
+            if self._pos[i] is val:
+                self.drag_id = i
+                return True
+        return False
+
+    def redrawed(self):
+        self.modified = False
 
     @property
     def pos(self):
-        return self._pos[0]
+        return self._pos[self.drag_id]
 
     @pos.setter
     def pos(self, val):
-        if val != self._pos[0]:
-            self.pre_pos = Vec2d(self._pos[0])
-            self._pos[0] = val
+        if val != self._pos[self.drag_id]:
+            self._pos[self.drag_id] = val
+            self.modified = True
 
+    """
+    FIRST SELECT BY pick drag id !!!
     @property
     def pos1(self):
         return self._pos[1]
@@ -67,6 +80,8 @@ class Transform(Component):
     def pos1(self, val):
         if val != self._pos[1]:
             self._pos[1] = val
+            self.modified = True
+    """
 
     @property
     def angle(self):
@@ -75,8 +90,8 @@ class Transform(Component):
     @angle.setter
     def angle(self, val):
         if val != self._angle:
-            self.pre_angle = self._angle
             self._angle = val
+            self.modified = True
 
     @property
     def scale(self):
@@ -85,8 +100,26 @@ class Transform(Component):
     @scale.setter
     def scale(self, val):
         if val != self._scale:
-            self.pre_scale = self._scale
             self._scale = val
+            self.modified = True
+
+    @property
+    def x(self):
+        return self._pos[self.drag_id].x
+
+    @x.setter
+    def x(self, val):
+        self._pos[self.drag_id].x = val
+        self.modified = True
+
+    @property
+    def y(self):
+        return self._pos[self.drag_id].y
+
+    @y.setter
+    def y(self, val):
+        self._pos[self.drag_id].y = val
+        self.modified = True
 
     @property
     def anchor(self):

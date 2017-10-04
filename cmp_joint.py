@@ -6,11 +6,12 @@ Segments terminal
 
 class Joint(Component):
 
-    def __init__(self, id, pos, seg_id):
+    def __init__(self, id, pos):
         self.id = id
-        self.ins = [seg_id, -1]
+        self.ios = []
+        self.ins = [-1, -1]
         self.outs = [-1, -1]
-        self.ways = 1
+        self.ways = 0
         self.pos = pos
         self.sw_out = -1 #index of output
         self.sw_in = -1  #index of input in cross
@@ -20,16 +21,23 @@ class Joint(Component):
         try to attach another joint
         :return: number of ways
         """
+        if self.ways == 0:
+            self.ways = 1
+            self.ios.append(seg_id)
+            return self.ways
         if self.ways == 1:
             self.ways = 2
+            self.ios.append(seg_id)
             self.outs[0] = seg_id
             self.sw_out = 0
             return self.ways
         if self.ways == 2:
             self.ways = 3
+            self.ios.append(seg_id)
             self.outs[1] = seg_id
             return self.ways
         if self.ways == 3:
+            self.ios.append(seg_id)
             self.ins[1] = seg_id
             self.ways = 4
             return self.ways

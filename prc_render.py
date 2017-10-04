@@ -41,20 +41,22 @@ class TextureRenderProcessor(Processor):
 
     def process(self, dt):
         for e, (tr, rend) in self.world.get_components(Transform, Renderable):
-            #if tr.pos_modified():
-            self.update_verts(tr, rend)
+            if tr.modified:
+                self.update_verts(tr, rend)
 
         for e, (tr, rends) in self.world.get_components(Transform, Renderables):
-            #if tr.pos_modified():
-            for r in rends.renderable:
-                self.update_verts(tr, r)
+            if tr.modified:
+                for r in rends.renderable:
+                    self.update_verts(tr, r)
 
     def update_verts(self, tr, rend):
         if rend.sub_modif:
             rend.vertex_list.colors[:] = rend.colors
 
         if rend.atype == GL_LINES:
-            rend.vertex_list.vertices[:] = [tr.pos.x, tr.pos.y, tr.pos1.x, tr.pos1.y]
+            rend.vertex_list.vertices[:] = [tr._pos[0].x, tr._pos[0].y, tr._pos[1].x, tr._pos[1].y]
+            #make tratsform unmodified
+            tr.redrawed()
         else:
             #quads
             v1 = -tr.anchor
@@ -73,6 +75,8 @@ class TextureRenderProcessor(Processor):
             v4.rotate(tr.angle)
             v4 = v4 + tr.pos
             rend.vertex_list.vertices[:] = [v1.x, v1.y, v2.x, v2.y, v3.x, v3.y, v4.x, v4.y]
+            #made unmodified
+            tr.redrawed()
 
     def draw_texture(self, rend, entity):
         texture = rend.texture
@@ -85,9 +89,9 @@ class TextureRenderProcessor(Processor):
         if self.debug_draw:
             Physics.space.debug_draw(self.opt)
 
-        #if Renderable.bg_image:
+        if Renderable.bg_image:
             #TODO: blit HIDING mask on Car texture so if it on hiden segment
-        #    Renderable.bg_image.texture.blit(0, 0)
+            Renderable.bg_image.texture.blit(0, 0)
 
         Renderable.batch.draw()
 

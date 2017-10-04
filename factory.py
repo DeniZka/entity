@@ -66,12 +66,10 @@ class Factory(Processor):
             if seg.tag == "TrackSegment" or seg.tag == "HiddenSegment" or seg.tag == "Crossing"\
                     or seg.tag == "LUSegment" or seg.tag == "EESegment":
 
-                ent = self.world.create_entity()
                 v1 = v2 = Vec2d(0, 0)
-
-                begin = int(seg.attrib["Begin"])
-                end = int(seg.attrib["End"])
-                id = ent #int(seg.attrib["ID"])
+                begin = None #int(seg.attrib["Begin"])
+                end = None  #int(seg.attrib["End"])
+                id = int(seg.attrib["ID"])
                 v1 = Vec2d(float(seg.attrib["X1"]), -float(seg.attrib["Y1"]))
                 v2 = Vec2d(float(seg.attrib["X2"]), -float(seg.attrib["Y2"]))
 
@@ -82,63 +80,19 @@ class Factory(Processor):
                     if not fnd_begin:
                         if v1.get_dist_sqrd(j.pos) < 1:
                             v1 = j.pos
-                            ways = j.attach(id)
-#                            if ways == 3:
-#                                self.switch_rend(j,)
                             self.joint_mod_colors(rends.renderable[0])
-                            fnd_begin = True
+                            begin = j
                     if not fnd_end:
                         if v2.get_dist_sqrd(j.pos) < 1:
                             v2 = j.pos
-                            ways = j.attach(id)
                             self.joint_mod_colors(rends.renderable[0])
-                            fnd_end = True
-
+                            end = j
                     #both found
-                    if fnd_begin and fnd_end:
+                    if begin != None and end != None:
                         break
 
-                s = Segment(id, v1, v2,  begin,  end, seg.tag)
-                self.world.add_component(ent, s)
+                self.create_segment(v1, v2, seg.tag, begin, end)
 
-                # create node circle
-                if not fnd_begin:
-                    jent = self.world.create_entity()
-                    j = Joint(jent, v1, id)
-                    self.world.add_component(jent, j)
-                    #transform
-                    self.world.add_component(jent, Transform(v1, 5, 5))
-                    #switch circle
-                    r = Renderable(self.texture_from_image("joint.png"))
-                    r.colors = [255, 0, 0, 255] * 4
-                    rs = Renderables(r)
-                    self.world.add_component(jent, rs)
-                if not fnd_end:
-                    jent = self.world.create_entity()
-                    j = Joint(jent, v2, id)
-                    self.world.add_component(jent, j)
-                    self.world.add_component(jent, Transform(v2, 5, 5))
-                    r = Renderable(self.texture_from_image("joint.png"))
-                    r.colors = [255, 0, 0, 255] * 4
-                    rs = Renderables(r)
-                    self.world.add_component(jent, rs)
-
-                #create segment line
-                tr = Transform(v1)
-                tr._pos[1] = v2
-                self.world.add_component(ent, tr)
-                br = Renderable(atype=GL_LINES)
-                if seg.tag == "TrackSegment":
-                    br.colors = [000, 200, 0, 255] * 2
-                elif seg.tag == "HiddenSegment":
-                    br.colors = [100, 100, 100, 255] * 2
-                elif seg.tag == "Crossing":
-                    br.colors = [200, 0, 0, 255] * 2
-                elif seg.tag == "LUSegment":
-                    br.colors = [200, 100, 0, 255] * 2
-                elif seg.tag == "EESegment":
-                    br.colors = [200, 0, 200, 255] * 2
-                self.world.add_component(ent, br)
 
             #elif seg.tag == "Switch":
         return self.environment
@@ -266,24 +220,76 @@ class Factory(Processor):
         self.world.add_component(ent, j)
         return j
 
-    def create_segment(self, pos):
+    def create_segment(self, v1, v2=None, tag="TrackSegment", begin=None, end=None ):
+        """
+
+        :param v1: segment start point vector
+        :param v2: segment end point vector
+        :param tag: type of track
+        :param begin: begin joint if found
+        :param end: end joint if found
+        :return: vector for second joint
+        """
+        #reseve entity for Segment
         ent = self.world.create_entity()
 
-        v1 = Vec2d(pos)
-        s = Segment(
-            Segment.next_id,
-            v1,
-            pos,
-            -1,
-            -1
-        )
-        Segment.next_id += 1
+        #joint entity for head
+        b_j = begin
+        if b_j == None:
+            b_ent = self.world.create_entity()
+            b_j = Joint(b_ent, v1)
+            self.world.add_component(b_ent, b_j)
+            # transform
+            self.world.add_component(b_ent, Transform(v1, 5, 5))
+            # switch circle
+            r = Renderable(self.texture_from_image("joint.png"))
+            r.colors = [255, 0, 0, 255] * 4
+            rs = Renderables(r)
+            self.world.add_component(b_ent, rs)
+
+        tr2 = None #will return last added for editor
+        #joint entity for tail
+        e_j = end
+        if e_j == None:
+            e_ent = self.world.create_entity()
+            e_j = Joint(e_ent, v2)
+            self.world.add_component(e_ent, e_j)
+            tr2 = Transform(v2, 5, 5)
+            self.world.add_component(e_ent, tr2)
+            r = Renderable(self.texture_from_image("joint.png"))
+            r.colors = [255, 0, 0, 255] * 4
+            rs = Renderables(r)
+            self.world.add_component(e_ent, rs)
+
+
+        if not v2:
+            v2 = Vec2d(v1)
+        s = Segment(ent, b_j.id, e_j.id, tag)
         self.world.add_component(ent, s)
 
-        br = Renderable(atype=GL_LINES, pos=v1, pos2=pos)
-        br.colors = [200, 100, 0, 255] * 2
+        #add segment ID in joints
+        b_j.attach(ent)
+        e_j.attach(ent)
+
+
+        # create segment line
+        tr = Transform(v1)
+        tr._pos[0] = v1
+        tr._pos[1] = v2
+        self.world.add_component(ent, tr)
+        br = Renderable(atype=GL_LINES)
+        if tag == "TrackSegment":
+            br.colors = [000, 200, 0, 255] * 2
+        elif tag == "HiddenSegment":
+            br.colors = [100, 100, 100, 255] * 2
+        elif tag == "Crossing":
+            br.colors = [200, 0, 0, 255] * 2
+        elif tag == "LUSegment":
+            br.colors = [200, 100, 0, 255] * 2
+        elif tag == "EESegment":
+            br.colors = [200, 0, 200, 255] * 2
         self.world.add_component(ent, br)
-        return br
+        return tr2
 
 
 

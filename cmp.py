@@ -4,6 +4,7 @@ Use those components with ecs world for cleanup callback instead of __del__ whic
 
 
 class Component:
+
     def on_remove(self):
         #empty callback function
         pass
