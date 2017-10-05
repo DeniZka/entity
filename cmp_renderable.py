@@ -1,5 +1,4 @@
 from pyglet.gl import *
-from pyglet.sprite import Sprite
 from pymunk import Vec2d
 from cmp import Component
 #TODO: GRAPHICS IS NOT MOVING CAUSE OF POS prop is not calling
@@ -14,7 +13,6 @@ class Renderable(Component):
     bg_image = None
 
     def __init__(self, texture=None, group=None, atype=GL_QUADS):
-        #TODO: REFACTORE THIS ADD LINES
         self.texture = texture
         self.vertex_list = None
         self.atype = atype
@@ -28,7 +26,8 @@ class Renderable(Component):
         self.vertex_list = None
         self.colors = [255, 255, 255, 255] * 4
         self.sub_colors = self.colors
-        self.sub_modif = True #support for smooth coloring in dt
+        self.sub_modif = True  # support for smooth coloring in dt
+
         vertex_format = 'v2f/stream'
         if texture:
             if self.group.parent == Renderable.ui:

@@ -14,7 +14,7 @@ class CameraProcessor(Processor):
         self.use_target_angle = False
         self.angle = 0
 
-        self.scale = 1
+        self.zoom = 1
 
         self.pos = pos
         self.target = target
@@ -50,7 +50,7 @@ class CameraProcessor(Processor):
             self.angle = self.target.angle
 
     def to_world(self, screen):
-        sub_v = (screen - CameraProcessor.hres) / self.scale
+        sub_v = (screen - CameraProcessor.hres) / self.zoom
         sub_v.rotate(self.angle)
         v = self.pos + sub_v
         return v
@@ -58,7 +58,7 @@ class CameraProcessor(Processor):
     def drag(self, dv):
         if self.target:
             return
-        sv = dv / self.scale
+        sv = dv / self.zoom
         sv.rotate(self.angle)
         self.pos -= sv
 
@@ -77,7 +77,7 @@ class CameraProcessor(Processor):
         self.pos = self.pos - v * z_mul
 
     def zoom_step(self, step):
-        self.scale = self.scale + self.scale * step
+        self.zoom = self.zoom + self.zoom * step
 
     def set_target(self, body):
         self.target = body
@@ -87,15 +87,16 @@ class CameraProcessor(Processor):
         #glLoadIdentity()
         glPushMatrix()
 
-        glTranslated(CameraProcessor.hres[0], CameraProcessor.hres[1], 0) #move to 0 to rotate correctly
-        glScalef(self.scale, self.scale, 1)
+        glTranslatef(CameraProcessor.hres[0], CameraProcessor.hres[1], 0) #move to 0 to rotate correctly
+
+        glScalef(self.zoom, self.zoom, 1)
 
         deg = math.degrees(self.angle)
         glRotatef(-deg, 0, 0, 1)
 
         gluLookAt(self.pos[0], self.pos[1], 1.0,
                   self.pos[0], self.pos[1], -1.0,
-                  0.0, 1.0, 0.0) #move to targer
+                  0.0, 1.0, 0.0) #move to target
 
     def restore_transform(self):
         glPopMatrix()

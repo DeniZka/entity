@@ -41,11 +41,11 @@ class TextureRenderProcessor(Processor):
 
     def process(self, dt):
         for e, (tr, rend) in self.world.get_components(Transform, Renderable):
-            if tr.modified:
+            if tr.modified(self.cam.zoom):
                 self.update_verts(tr, rend)
 
         for e, (tr, rends) in self.world.get_components(Transform, Renderables):
-            if tr.modified:
+            if tr.modified(self.cam.zoom):
                 for r in rends.renderable:
                     self.update_verts(tr, r)
 
@@ -53,8 +53,15 @@ class TextureRenderProcessor(Processor):
         if rend.sub_modif:
             rend.vertex_list.colors[:] = rend.colors
 
+        if rend.atype == GL_POINTS:
+            rend.vertex_list.vertices[:] = [tr.x, tr.y]
         if rend.atype == GL_LINES:
-            rend.vertex_list.vertices[:] = [tr._pos[0].x, tr._pos[0].y, tr._pos[1].x, tr._pos[1].y]
+            rend.vertex_list.vertices[:] = [
+                tr.x,
+                tr.y,
+                tr.x1,
+                tr.y1
+            ]
             #make tratsform unmodified
             tr.redrawed()
         else:

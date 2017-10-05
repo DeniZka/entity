@@ -98,9 +98,50 @@ class Factory(Processor):
         return self.environment
 
     def testing(self):
-        #ent = self.world.create_entity()
-        #rends = Renderables();
-        #self.world.add_component(ent, rends)
+        e = self.world.create_entity()
+        r = Renderable(self.texture_from_image("joint.png"))
+        r.colors = [255, 0, 0, 255] * 4
+        T = Transform(Vec2d(150, 150), 10, 10)
+        T.unzoomable = True
+        self.world.add_component(e, r)
+        self.world.add_component(e, T)
+        #top line
+        e = self.world.create_entity()
+        r = Renderable(atype=GL_LINES)
+        r.colors = [255, 0, 0, 255] * 2
+        t = Transform(Vec2d(0,0))
+        t._pos[1] = Vec2d(50, 0)
+        t.parent = T
+        self.world.add_component(e, r)
+        self.world.add_component(e, t)
+        #left line
+        e = self.world.create_entity()
+        r = Renderable(atype=GL_LINES)
+        r.colors = [255, 0, 0, 255] * 2
+        t = Transform(Vec2d(0,0))
+        t._pos[1] = Vec2d(0, -100)
+        t.parent = T
+        self.world.add_component(e, r)
+        self.world.add_component(e, t)
+        #right line
+        e = self.world.create_entity()
+        r = Renderable(atype=GL_LINES)
+        r.colors = [255, 0, 0, 255] * 2
+        t = Transform(Vec2d(50,0))
+        t._pos[1] = Vec2d(50, -100)
+        t.parent = T
+        self.world.add_component(e, r)
+        self.world.add_component(e, t)
+        #bottom line
+        e = self.world.create_entity()
+        r = Renderable(atype=GL_LINES)
+        r.colors = [255, 0, 0, 255] * 2
+        t = Transform(Vec2d(0,-100))
+        t._pos[1] = Vec2d(50, -100)
+        t.parent = T
+        self.world.add_component(e, r)
+        self.world.add_component(e, t)
+
         return
 
     def createPlayer(self, pos):

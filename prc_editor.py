@@ -40,14 +40,14 @@ class EditorProcessor(Processor):
         else:
             return False
 
-    def can_merge(self, src_trs, dst_tr):
+    def can_merge(self, src_trs, dst_tr, src_pos):
         # check joints transfromrations are the same
         if src_trs[0] == dst_tr:
             return False
         if self.contact_dist(src_trs[0].pos, dst_tr.pos):
             #check is not a tail of one of self segments
             for tr in src_trs:
-                if tr.other_point(tr.pos) == dst_tr.pos:
+                if tr.other_point(src_pos) == dst_tr.pos:
                     return False
             return dst_tr
 
@@ -61,16 +61,15 @@ class EditorProcessor(Processor):
         ret = [tr]
         for sg_ent in jnt.ios:
             sg_tr = self.world.component_for_entity(sg_ent, Transform)
-            if not sg_tr.pick_pt_drag_id(tr.pos):
-                print("Problem")
+            #if not sg_tr.pick_pt_drag_id(tr.pos):
+            #    print("Problem")
             ret.append(sg_tr)
         return ret
-
 
     def on_mouse_press(self, x, y, button, modifiers):
         if button == 1:
             w = self.cam.to_world(Vec2d(x, y))
-            factory = self.world.get_processor(Factory)
+
             found = False
             for ent, (tr, jnt) in self.world.get_components(Transform, Joint):
                 if self.contact_dist(tr.pos, w):
@@ -82,15 +81,17 @@ class EditorProcessor(Processor):
                         break
 
             if not found:
+                factory = self.world.get_processor(Factory)
                 rend = factory.create_segment(w)
                 self.picked = [rend]
 
     def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
         if self.picked:
             w = self.cam.to_world(Vec2d(x, y))
+            self.picked[0].x = w.x
+            self.picked[0].y = w.y
             for v in self.picked:
-                v.x = w.x #update the X and Y cause of pos uses by multiple entity
-                v.y = w.y
+                v._set_modified()
 
     def on_mouse_release(self, x, y, button, modifiers):
         if button == 1 and self.picked:
@@ -100,14 +101,14 @@ class EditorProcessor(Processor):
                 #check ways total count
                 if jnt.ways + cnt > 4:
                     continue
-                if self.can_merge(self.picked, tr):
+                if self.can_merge(self.picked, tr, self.picked[0].pos):
                     #attach to joint
                     for seg_id in self.picked_jnt.ios:
                         jnt.attach(seg_id)
                     #attach to segment
-                    for t in self.picked:
-                        t.pos = jnt.pos
-
+                    for i in range(1, cnt+1):
+                        assert (self.picked[i].replace_pt(self.picked[0].pos, jnt.pos) == True), "Some problem"
+                        self.picked[i]._set_modified()
                     self.world.delete_entity(self.picked_id)
                     self.picked_jnt = None
                     self.picked = None
