@@ -7,48 +7,72 @@ from hnd_window import WindowHandler
 from factory import Factory
 from cmp_physics import Physics
 from prc_camera import CameraProcessor
+from cmp_transform import Transform
 
 
 class UIProcessor(Processor):
     def __init__(self):
         self.cam = None
+        self.win_coord = None
+        self.scene_coord = None
+        self.screen = None
         return
 
     def on_add(self, proc):
-        return
         if proc == self and self.world.win_hnd:
             self.cam = self.world.get_processor(CameraProcessor)
             self.sub_id = self.world.win_hnd.subscribe("on_resize", self.on_win_resize)
+            self.sub_id = self.world.win_hnd.subscribe("on_mouse_motion", self.on_mouse_motion)
+            self.world.win_hnd.subscribe("on_mouse_drag", self.on_mouse_drag)
         if proc.__class__ is CameraProcessor:
             self.cam = proc
 
     def on_remove(self):
-        return
         if self.world.win_hnd:
             self.world.win_hnd.unsubscribe("on_resize", self.sub_id)
 
-    def on_win_resize(self, width, height):
-        return
-        self.compass_pos.x = width - 64
-        self.compass_pos.y = height - 64
+    def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
+        self.on_mouse_motion(x, y, dx, dy)
 
+
+    def on_mouse_motion(self, x, y, dx, dy):
+        self.win_coord.text = "Actual\tX:" + str(x) + "\tY:" + str(y)
+        v = self.cam.to_world(Vec2d(x, y))
+        self.scene_coord.text = "World\tX:" + str(int(v.x)) + "\tY:" + str(int(v.y))
+        v = self.cam.to_screen(v)
+        self.screen.text = "Back\tX:" + str(int(v.x)) + "\tY:" + str(int(v.y))
+        return
+
+    def on_win_resize(self, width, height):
+        self.com_t.x = width - 64
+        self.com_t.y = height - 64
+        self.com_t._set_modified()
+        self.win_coord.y = height - 15
+        return
         self.vel.x = width - 64
         self.vel.y = height - 150
 
     def load_ui(self):
-        return
-        pfct = self.world.get_processor(Factory)
-        self.pl_phy = self.world.component_for_entity(pfct.player, Physics)
-        self.en_phy = self.world.component_for_entity(pfct.enemy, Physics)
+        self.win_coord = pyglet.text.Label("", x=0, y=WindowHandler.RESOLUTION[1]-15, batch=Renderable.ui_batch)
+        self.scene_coord = pyglet.text.Label("", x=0, y=WindowHandler.RESOLUTION[1]-30, batch=Renderable.ui_batch)
+        self.screen = pyglet.text.Label("", x=0, y=WindowHandler.RESOLUTION[1] - 45, batch=Renderable.ui_batch)
 
-        self.compass_pos = Vec2d(WindowHandler.RESOLUTION[0] - 64,
+        pfct = self.world.get_processor(Factory)
+        v = Vec2d(WindowHandler.RESOLUTION[0] - 64,
                     WindowHandler.RESOLUTION[1] - 64)
         compass = self.world.create_entity()
         tex = pyglet.resource.image("compass.png").get_texture(True)
         rend = Renderable(tex, group=Renderable.ui)
-        rend.pos = self.compass_pos
+        rend.colors = [255, 255, 255, 150] * 4
+        t = Transform(v, tex.width, tex.height)
+        self.world.add_component(compass, t)
         self.world.add_component(compass, rend)
-        self.com_rend = rend
+        self.com_t = t
+        return
+
+        self.pl_phy = self.world.component_for_entity(pfct.player, Physics)
+        self.en_phy = self.world.component_for_entity(pfct.enemy, Physics)
+
         #self dir arrow
         arrow = self.world.create_entity()
         tex = pyglet.resource.image("arrow.png").get_texture(True)
@@ -86,6 +110,8 @@ class UIProcessor(Processor):
 
 
     def process(self, dt):
+        self.com_t.angle = -self.cam.angle
+
         return
         if self.pl_phy:
             self.p_rend.angle = self.pl_phy.body.angle - self.cam.angle
@@ -103,10 +129,10 @@ class UIProcessor(Processor):
             v = self.en_phy.body.position - self.pl_phy.body.position
             v.rotate(math.radians(-90))
             self.e_rend.angle = v.angle - self.cam.angle
-        self.com_rend.angle = -self.cam.angle
+
         return
 
     def draw(self):
-        return
         Renderable.ui_batch.draw()
+        return
         self.vel.draw()

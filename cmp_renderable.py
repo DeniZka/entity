@@ -51,12 +51,20 @@ class Renderable(Component):
                     self.group,
                     vertex_format, 'c4B/stream'
                 )
-            else:
+            elif atype == GL_LINES:
                 self.vertex_list = Renderable.batch.add(
                     2, atype,
                     self.group,
                     vertex_format, 'c4B/static'
                 )
+            elif atype == GL_POINTS:
+                self.vertex_list = Renderable.batch.add(
+                    1, atype,
+                    self.group,
+                    vertex_format, 'c4B/static'
+                )
+            else:
+                assert (False), "WRONG atype"
 
     def on_remove(self):
         if self.vertex_list:

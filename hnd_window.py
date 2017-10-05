@@ -71,6 +71,10 @@ class WindowHandler(pyglet.window.Window):
         for sub in self.win_subs["on_key_release"]:
             sub[1](symbol, modifiers)
 
+    def on_mouse_motion(self, x, y, dx, dy):
+        for sub in self.win_subs["on_mouse_motion"]:
+            sub[1](x, y, dx, dy)
+
     def on_mouse_press(self, x, y, button, modifiers):
         for sub in self.win_subs["on_mouse_press"]:
             sub[1](x, y, button, modifiers)

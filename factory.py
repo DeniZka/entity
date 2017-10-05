@@ -2,7 +2,6 @@ from prc import Processor
 import pyglet
 from cmp_transform import Transform
 from cmp_renderable import Renderable
-from cmp_renderables import Renderables
 import pymunk
 from cmp_physics import Physics
 import math
@@ -70,23 +69,23 @@ class Factory(Processor):
                 v1 = v2 = Vec2d(0, 0)
                 begin = None #int(seg.attrib["Begin"])
                 end = None  #int(seg.attrib["End"])
-                id = int(seg.attrib["ID"])
+                #id = int(seg.attrib["ID"])
                 v1 = Vec2d(float(seg.attrib["X1"]), -float(seg.attrib["Y1"]))
                 v2 = Vec2d(float(seg.attrib["X2"]), -float(seg.attrib["Y2"]))
 
                 #replace with existing nodes
                 fnd_begin = False
                 fnd_end = False
-                for e, (j, rends) in self.world.get_components(Joint, Renderables):
+                for e, (j, rend) in self.world.get_components(Joint, Renderable):
                     if not fnd_begin:
                         if v1.get_dist_sqrd(j.pos) < 1:
                             v1 = j.pos
-                            self.joint_mod_colors(rends.renderable[0])
+                            self.joint_mod_colors(rend)
                             begin = j
                     if not fnd_end:
                         if v2.get_dist_sqrd(j.pos) < 1:
                             v2 = j.pos
-                            self.joint_mod_colors(rends.renderable[0])
+                            self.joint_mod_colors(rend)
                             end = j
                     #both found
                     if begin != None and end != None:
@@ -95,10 +94,25 @@ class Factory(Processor):
                 self.create_segment(v1, v2, seg.tag, begin, end)
 
 
-            #elif seg.tag == "Switch":
+            elif seg.tag == "Switch" or seg.tag == "FourWay" :
+                v1 = Vec2d(float(seg.attrib["X"]), -float(seg.attrib["Y"]))
+                for e, (j, tr) in self.world.get_components(Joint, Transform):
+                    #make switch
+                    if tr.pos.get_dist_sqrd(v1) < 1:
+                        self.create_switch(j, tr)
+                        break
+                continue
         return self.environment
 
     def testing(self):
+        e = self.world.create_entity()
+        r = Renderable(atype=GL_POINTS)
+        r.colors = [20, 255, 0, 255 ]
+        t = Transform(Vec2d(400, 100))
+        self.world.add_component(e, r)
+        self.world.add_component(e, t)
+
+
         for i in range(1, 6):
             e = self.world.create_entity()
             r = Renderable(self.texture_from_image("joint.png"))
@@ -260,17 +274,16 @@ class Factory(Processor):
         return bullet
 
 
-    def create_joint(self, pos):
+    def create_switch(self, j, tr):
         ent = self.world.create_entity()
         # render comp
-        br = Renderable(self.texture_from_image("joint.png"), 10, 10)
-        br.colors = [255, 0, 0, 255] * 4
-        br.pos = pos
-        self.world.add_component(ent, br)
-        # joint
-        j = Joint()
-        self.world.add_component(ent, j)
-        return j
+        r = Renderable(self.texture_from_image("joint.png"))
+        r.colors = [255, 0, 0, 255] * 4
+        t = Transform(Vec2d(0, 0), 10, 20)
+        t.parent = tr
+        self.world.add_component(ent, r)
+        self.world.add_component(ent, t)
+
 
     def create_segment(self, v1, v2=None, tag="TrackSegment", begin=None, end=None ):
         """
@@ -299,8 +312,7 @@ class Factory(Processor):
             # switch circle
             r = Renderable(self.texture_from_image("joint.png"))
             r.colors = [255, 0, 0, 255] * 4
-            rs = Renderables(r)
-            self.world.add_component(b_ent, rs)
+            self.world.add_component(b_ent, r)
 
         tr2 = None #will return last added for editor
         #joint entity for tail
@@ -314,8 +326,7 @@ class Factory(Processor):
             self.world.add_component(e_ent, tr2)
             r = Renderable(self.texture_from_image("joint.png"))
             r.colors = [255, 0, 0, 255] * 4
-            rs = Renderables(r)
-            self.world.add_component(e_ent, rs)
+            self.world.add_component(e_ent, r)
 
 
         s = Segment(ent, b_j.id, e_j.id, tag)

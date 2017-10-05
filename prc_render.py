@@ -1,7 +1,6 @@
 from prc import Processor
 from pyglet.gl import *
 from cmp_renderable import Renderable
-from cmp_renderables import Renderables
 from cmp_transform import Transform
 from pymunk import Vec2d
 from prc_camera import CameraProcessor
@@ -44,17 +43,14 @@ class TextureRenderProcessor(Processor):
             if tr.modified(self.cam.zoom):
                 self.update_verts(tr, rend)
 
-        for e, (tr, rends) in self.world.get_components(Transform, Renderables):
-            if tr.modified(self.cam.zoom):
-                for r in rends.renderable:
-                    self.update_verts(tr, r)
-
     def update_verts(self, tr, rend):
         if rend.sub_modif:
             rend.vertex_list.colors[:] = rend.colors
 
         if rend.atype == GL_POINTS:
             rend.vertex_list.vertices[:] = [tr.x, tr.y]
+            return
+
         if rend.atype == GL_LINES:
             rend.vertex_list.vertices[:] = [
                 tr.x,

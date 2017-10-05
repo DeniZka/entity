@@ -50,10 +50,26 @@ class CameraProcessor(Processor):
             self.angle = self.target.angle
 
     def to_world(self, screen):
+        """
+        Translate screen position to world
+        :param screen: Vec2d on screen
+        :return: Vec2d of world
+        """
         sub_v = (screen - CameraProcessor.hres) / self.zoom
         sub_v.rotate(self.angle)
         v = self.pos + sub_v
         return v
+
+    def to_screen(self, world):
+        """
+        Translate world vector to screen
+        :param world:
+        :return:
+        """
+        sub_v = world - self.pos  # TODO check camera unwrapping
+        sub_v.rotate(-self.angle)
+        sub_v = sub_v * self.zoom + CameraProcessor.hres
+        return sub_v
 
     def drag(self, dv):
         if self.target:
