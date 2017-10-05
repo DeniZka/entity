@@ -17,6 +17,8 @@ class EditorProcessor(Processor):
         self.picked_id = -1
         self.picked_jnt = None
         self.merge_limit = 4
+        self.cam_rotating = False
+        self.cam_rot_angle = 0
         return
 
     def on_add(self, proc):
@@ -87,6 +89,9 @@ class EditorProcessor(Processor):
                 self.picked_id = seg[0]
                 self.picked_jnt = seg[1]
                 self.picked = seg[2]
+        if button == 2:
+            v = Vec2d(x - self.world.win_hnd.res[0]*0.5, y - self.world.win_hnd.res[1]*0.5)
+            self.cam_rot_angle = v.angle
 
 
     def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
@@ -96,6 +101,11 @@ class EditorProcessor(Processor):
             self.picked[0].y = w.y
             for v in self.picked:
                 v._set_modified()
+        if buttons == 2:
+            v = Vec2d(x - self.world.win_hnd.res[0]/2, y - self.world.win_hnd.res[1]/2)
+            a = v.angle
+            self.cam.angle += (self.cam_rot_angle - a)
+            self.cam_rot_angle = a
 
     def on_mouse_release(self, x, y, button, modifiers):
         if button == 1 and self.picked:

@@ -48,18 +48,20 @@ class UIProcessor(Processor):
         self.com_t.y = height - 64
         self.com_t._set_modified()
         self.win_coord.y = height - 15
+        self.scene_coord.y = height - 30
+        self.screen.y = height - 45
         return
         self.vel.x = width - 64
         self.vel.y = height - 150
 
     def load_ui(self):
-        self.win_coord = pyglet.text.Label("", x=0, y=WindowHandler.RESOLUTION[1]-15, batch=Renderable.ui_batch)
-        self.scene_coord = pyglet.text.Label("", x=0, y=WindowHandler.RESOLUTION[1]-30, batch=Renderable.ui_batch)
-        self.screen = pyglet.text.Label("", x=0, y=WindowHandler.RESOLUTION[1] - 45, batch=Renderable.ui_batch)
+        self.win_coord = pyglet.text.Label("", x=0, y=WindowHandler.res[1] - 15, batch=Renderable.ui_batch)
+        self.scene_coord = pyglet.text.Label("", x=0, y=WindowHandler.res[1] - 30, batch=Renderable.ui_batch)
+        self.screen = pyglet.text.Label("", x=0, y=WindowHandler.res[1] - 45, batch=Renderable.ui_batch)
 
         pfct = self.world.get_processor(Factory)
-        v = Vec2d(WindowHandler.RESOLUTION[0] - 64,
-                    WindowHandler.RESOLUTION[1] - 64)
+        v = Vec2d(WindowHandler.res[0] - 64,
+                  WindowHandler.res[1] - 64)
         compass = self.world.create_entity()
         tex = pyglet.resource.image("compass.png").get_texture(True)
         rend = Renderable(tex, group=Renderable.ui)
@@ -104,8 +106,8 @@ class UIProcessor(Processor):
         #velocity
         self.vel = pyglet.text.Label(
             str(self.pl_phy.body.velocity.length),
-            x = WindowHandler.RESOLUTION[0] - 40,
-            y = WindowHandler.RESOLUTION[1] - 150
+            x =WindowHandler.res[0] - 40,
+            y =WindowHandler.res[1] - 150
         )
 
 

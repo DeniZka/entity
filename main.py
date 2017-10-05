@@ -28,7 +28,7 @@ def run(args=None):
 
     factory = Factory()
     inp_processor = InputProcessor(factory)
-    pos = Vec2d(win_handler.RESOLUTION[0], win_handler.RESOLUTION[1])
+    pos = Vec2d(win_handler.res[0], win_handler.res[1])
     camera = CameraProcessor(pos)
 
     # Create some Processor instances, and asign them to be processed.

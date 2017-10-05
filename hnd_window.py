@@ -9,13 +9,13 @@ import math
 from cmp_physics import Physics
 
 class WindowHandler(pyglet.window.Window):
-    RESOLUTION = 720, 480
+    res = 720, 480
     FPS = 60
     dt_cnt = 0
     dt_lim = 1.0 / FPS
 
     def __init__(self,  debug_draw=True):
-        super().__init__(width=WindowHandler.RESOLUTION[0], height=WindowHandler.RESOLUTION[1],
+        super().__init__(width=WindowHandler.res[0], height=WindowHandler.res[1],
                          resizable=True)
         self.win_subs = {}
         self.sub_id = 0 #subscribers identifier
@@ -53,6 +53,7 @@ class WindowHandler(pyglet.window.Window):
 
     def on_resize(self, width, height):
         super().on_resize(width, height)
+        self.res = (width, height)
         for sub in self.win_subs["on_resize"]:
             sub[1](width, height)
 
