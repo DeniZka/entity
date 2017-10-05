@@ -16,6 +16,7 @@ class EditorProcessor(Processor):
         self.picked = None
         self.picked_id = -1
         self.picked_jnt = None
+        self.merge_limit = 4
         return
 
     def on_add(self, proc):
@@ -61,7 +62,7 @@ class EditorProcessor(Processor):
         ret = [tr]
         for sg_ent in jnt.ios:
             sg_tr = self.world.component_for_entity(sg_ent, Transform)
-            #if not sg_tr.pick_pt_drag_id(tr.pos):
+            # if not sg_tr.pick_pt_drag_id(tr.pos):
             #    print("Problem")
             ret.append(sg_tr)
         return ret
@@ -82,8 +83,11 @@ class EditorProcessor(Processor):
 
             if not found:
                 factory = self.world.get_processor(Factory)
-                rend = factory.create_segment(w)
-                self.picked = [rend]
+                seg = factory.create_segment(w)
+                self.picked_id = seg[0]
+                self.picked_jnt = seg[1]
+                self.picked = seg[2]
+
 
     def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
         if self.picked:
@@ -98,14 +102,14 @@ class EditorProcessor(Processor):
             w = self.cam.to_world(Vec2d(x, y))
             cnt = len(self.picked) - 1
             for ent, (tr, jnt) in self.world.get_components(Transform, Joint):
-                #check ways total count
-                if jnt.ways + cnt > 4:
+                # check ways total count
+                if jnt.ways + cnt > self.merge_limit:
                     continue
                 if self.can_merge(self.picked, tr, self.picked[0].pos):
-                    #attach to joint
+                    # attach to joint
                     for seg_id in self.picked_jnt.ios:
                         jnt.attach(seg_id)
-                    #attach to segment
+                    # attach to segment
                     for i in range(1, cnt+1):
                         assert (self.picked[i].replace_pt(self.picked[0].pos, jnt.pos) == True), "Some problem"
                         self.picked[i]._set_modified()
@@ -117,20 +121,6 @@ class EditorProcessor(Processor):
         self.picked_jnt = None
         self.picked = None
         self.picked_id = -1
-
-
-
-        #TODO; merge with existing (and IS not self)
-        """
-        v = self.cam.to_world(Vec2d(x, y))
-        for ent, (seg, rend) in self.world.get_components(Segment, Renderable):
-            
-            tgtv = self.in_target(seg, v)
-            if tgtv:
-               if tgtv == seg.pos1 and self.picked is not seg.pos1:
-                seg
-                self
-        """
 
     def process(self, dt):
         return

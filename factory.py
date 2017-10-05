@@ -274,6 +274,9 @@ class Factory(Processor):
         #reseve entity for Segment
         ent = self.world.create_entity()
 
+        if not v2:
+            v2 = Vec2d(v1)
+
         #joint entity for head
         b_j = begin
         if b_j == None:
@@ -291,6 +294,7 @@ class Factory(Processor):
         tr2 = None #will return last added for editor
         #joint entity for tail
         e_j = end
+        e_ent = 0
         if e_j == None:
             e_ent = self.world.create_entity()
             e_j = Joint(e_ent, v2)
@@ -303,8 +307,6 @@ class Factory(Processor):
             self.world.add_component(e_ent, rs)
 
 
-        if not v2:
-            v2 = Vec2d(v1)
         s = Segment(ent, b_j.id, e_j.id, tag)
         self.world.add_component(ent, s)
 
@@ -330,13 +332,7 @@ class Factory(Processor):
         elif tag == "EESegment":
             br.colors = [200, 0, 200, 255] * 2
         self.world.add_component(ent, br)
-        return tr2
-
-
-
-
-
-
+        return (e_ent, e_j, [tr2, tr])
 
     def texture_from_image(self, image_name):
         """Create a pyglet Texture from an image file"""
