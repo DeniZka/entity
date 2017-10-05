@@ -8,7 +8,7 @@ class CameraProcessor(Processor):
     
     hres = Vec2d(800, 600)
 
-    def __init__(self, resolution, pos=(100,100), target=None):
+    def __init__(self, resolution, pos=Vec2d(100,100), target=None):
         self.pos = Vec2d(0, 0)
         self.target = None
         self.use_target_angle = False

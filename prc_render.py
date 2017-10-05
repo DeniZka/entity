@@ -66,22 +66,41 @@ class TextureRenderProcessor(Processor):
             tr.redrawed()
         else:
             #quads
-            v1 = -tr.anchor
-            v1.rotate(tr.angle)
-            v1 = v1 + tr.pos
+            if not tr.unzoomable:
+                v1 = Vec2d(-tr.anchor.x * tr.scale.x, -tr.anchor.y * tr.scale.y)
+                v1.rotate(tr.angle)
+                v1 = v1 + tr.pos
 
-            v2 = Vec2d((tr.w - tr.anchor.x), -tr.anchor.y)
-            v2.rotate(tr.angle)
-            v2 = v2 + tr.pos
+                v2 = Vec2d((tr.w - tr.anchor.x) * tr.scale.x, -tr.anchor.y * tr.scale.y)
+                v2.rotate(tr.angle)
+                v2 = v2 + tr.pos
 
-            v3 = Vec2d((tr.w - tr.anchor.x), (tr.h - tr.anchor.y))
-            v3.rotate(tr.angle)
-            v3 = v3 + tr.pos
+                v3 = Vec2d((tr.w - tr.anchor.x)*tr.scale.x, (tr.h - tr.anchor.y)*tr.scale.y)
+                v3.rotate(tr.angle)
+                v3 = v3 + tr.pos
 
-            v4 = Vec2d(-tr.anchor.x, (tr.h - tr.anchor.y))
-            v4.rotate(tr.angle)
-            v4 = v4 + tr.pos
-            rend.vertex_list.vertices[:] = [v1.x, v1.y, v2.x, v2.y, v3.x, v3.y, v4.x, v4.y]
+                v4 = Vec2d(-tr.anchor.x*tr.scale.x, (tr.h - tr.anchor.y)*tr.scale.y)
+                v4.rotate(tr.angle)
+                v4 = v4 + tr.pos
+                rend.vertex_list.vertices[:] = [v1.x, v1.y, v2.x, v2.y, v3.x, v3.y, v4.x, v4.y]
+            else:
+                v1 = Vec2d(-tr.anchor.x / self.cam.zoom, -tr.anchor.y / self.cam.zoom)
+                v1.rotate(tr.angle)
+                v1 = v1 + tr.pos
+
+                v2 = Vec2d((tr.w - tr.anchor.x) / self.cam.zoom, -tr.anchor.y / self.cam.zoom)
+                v2.rotate(tr.angle)
+                v2 = v2 + tr.pos
+
+                v3 = Vec2d((tr.w - tr.anchor.x)/self.cam.zoom, (tr.h - tr.anchor.y)/self.cam.zoom)
+                v3.rotate(tr.angle)
+                v3 = v3 + tr.pos
+
+                v4 = Vec2d(-tr.anchor.x/self.cam.zoom, (tr.h - tr.anchor.y)/self.cam.zoom)
+                v4.rotate(tr.angle)
+                v4 = v4 + tr.pos
+                rend.vertex_list.vertices[:] = [v1.x, v1.y, v2.x, v2.y, v3.x, v3.y, v4.x, v4.y]
+
             #made unmodified
             tr.redrawed()
 

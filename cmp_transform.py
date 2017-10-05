@@ -36,13 +36,13 @@ class Transform(Component):
         self._angle = angle
         self.pre_angle = self._angle
 
-        self._scale = Vec2d(0, 0)
+        self._scale = Vec2d(1, 1)
         self.pre_scale = Vec2d(0, 0)
 
-        self._modified = True  # need to redraw
+        self._modified = True  #check if need to redraw
 
-        self.unzoomable = False # camera zoom does not affect renderable sizes
-        self.last_cam_zoom = 1  #
+        self.unzoomable = False  # camera zoom does not affect renderable sizes
+        self.last_cam_zoom = 1   #
 
     def _set_modified(self):
         """
@@ -202,23 +202,23 @@ class Transform(Component):
     def anchor(self):
         return self._anchor
 
+    @anchor.setter
+    def anchor(self, val):
+        self._anchor = val
+
     @property
     def w(self):
         if self.unzoomable:
-            return self._w / self.last_cam_zoom
+            return self._w
         else:
             return self._w
 
     @property
     def h(self):
         if self.unzoomable:
-            return self._h / self.last_cam_zoom
+            return self._h
         else:
             return self._h
-
-    @property
-    def scale(self):
-        return self._scale
 
     @property
     def parent(self):

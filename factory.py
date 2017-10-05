@@ -17,6 +17,7 @@ from cmp_joint import Joint
 import xml.etree.ElementTree as ET
 from cmp_segment import Segment
 from pyglet.gl import *
+from random import randint
 
 class Factory(Processor):
     def __init__(self):
@@ -98,6 +99,16 @@ class Factory(Processor):
         return self.environment
 
     def testing(self):
+        for i in range(1, 6):
+            e = self.world.create_entity()
+            r = Renderable(self.texture_from_image("joint.png"))
+            r.colors = [randint(0, 255), randint(0,255), randint(0,255), 255] * 4
+            t = Transform(Vec2d(300, 300), 10, 10)
+            t.anchor = Vec2d(2, 2)
+            t.scale = Vec2d(1*i, i*1)
+            self.world.add_component(e, r)
+            self.world.add_component(e, t)
+
         e = self.world.create_entity()
         r = Renderable(self.texture_from_image("joint.png"))
         r.colors = [255, 0, 0, 255] * 4
