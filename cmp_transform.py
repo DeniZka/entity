@@ -81,9 +81,13 @@ class Transform(Component):
                 return True
         return False
 
-    @property
-    def modified(self):
-        return self._modified
+    def modified(self, zoom=None):
+        if not self.unzoomable:
+            return self._modified
+        else:
+            if zoom and zoom != self.last_cam_zoom:
+                self._modified = True
+                return self._modified
 
     @property
     def pos(self):

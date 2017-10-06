@@ -43,7 +43,7 @@ class TextureRenderProcessor(Processor):
             if rend.modified:
                 rend.vertex_list.colors[:] = rend.colors
 
-            if tr.modified:
+            if tr.modified(self.cam.zoom):
                 if rend.atype == GL_POINTS:
                     rend.vertex_list.vertices[:] = [tr.x, tr.y]
                 elif rend.atype == GL_LINES:
