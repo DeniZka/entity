@@ -1,17 +1,18 @@
 import pyglet
+from app.prc_camera import CameraProcessor
+from app.prc_editor import EditorProcessor
+from app.prc_input import InputProcessor
+from app.prc_partciles import ParticleProcessor
+from app.prc_render import TextureRenderProcessor
+from app.prc_ui import UIProcessor
 from pyglet.gl import *
-from ecs import Ecs
-from prc_render import TextureRenderProcessor
-from factory import Factory
-from hnd_window import WindowHandler
-from prc_input import InputProcessor
-
 from pymunk import Vec2d
-from prc_physics import PhysicsProcessor
-from prc_partciles import ParticleProcessor
-from prc_camera import CameraProcessor
-from prc_ui import UIProcessor
-from prc_editor import EditorProcessor
+
+from app.ecs import Ecs
+from app.factory import Factory
+from app.hnd_window import WindowHandler
+from app.prc_physics import PhysicsProcessor
+
 
 def run(args=None):
     # pyglet graphics batch for efficient rendering

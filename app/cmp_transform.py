@@ -1,5 +1,6 @@
-from cmp import Component
 from pymunk import Vec2d
+
+from app.cmp import Component
 
 
 class Transform(Component):

@@ -1,5 +1,6 @@
 import random
-from cmp import Component
+
+from app.cmp import Component
 
 
 class TempLive(Component):

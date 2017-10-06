@@ -1,4 +1,4 @@
-from cmp import Component
+from app.cmp import Component
 
 
 class ParticleBehave(Component):

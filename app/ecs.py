@@ -5,6 +5,9 @@ esper variation with cleanup component calling
 
 
 class Ecs(esper.World):
+    def __init__(self, timed=False):
+        super().__init__(timed)
+
     """
     callback for components for cleanup
     """

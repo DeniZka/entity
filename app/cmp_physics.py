@@ -1,5 +1,7 @@
 from pymunk import Vec2d
-from cmp import Component
+
+from app.cmp import Component
+
 """
     IF Physics component will destroyed the renderable and emitter could be alive
 """

@@ -1,13 +1,15 @@
-from prc import Processor
-import pyglet
-from cmp_renderable import Renderable
-from pymunk import Vec2d
 import math
-from hnd_window import WindowHandler
-from factory import Factory
-from cmp_physics import Physics
-from prc_camera import CameraProcessor
-from cmp_transform import Transform
+
+import pyglet
+from pymunk import Vec2d
+
+from app.cmp_physics import Physics
+from app.cmp_renderable import Renderable
+from app.cmp_transform import Transform
+from app.factory import Factory
+from app.hnd_window import WindowHandler
+from app.prc import Processor
+from app.prc_camera import CameraProcessor
 
 
 class UIProcessor(Processor):

@@ -1,23 +1,25 @@
-from prc import Processor
-import pyglet
-from cmp_transform import Transform
-from cmp_renderable import Renderable
-import pymunk
-from cmp_physics import Physics
 import math
-from pymunk import  Vec2d
-from cmp_input import  Input
-from cmp_cannon import  Cannon
-from cmp_temp_live import TempLive
-from cmp_hp import Hp
-from cmp_part_emiter import ParticleEmiter
-import math
-from cmp_joint import Joint
 import xml.etree.ElementTree as ET
-from cmp_segment import Segment
-from pyglet.gl import *
 from random import randint
-from cmp_instance import Instance
+
+import pyglet
+import pymunk
+from pyglet.gl import *
+from pymunk import Vec2d
+
+from app.cmp_cannon import Cannon
+from app.cmp_hp import Hp
+from app.cmp_input import Input
+from app.cmp_instance import Instance
+from app.cmp_joint import Joint
+from app.cmp_part_emiter import ParticleEmiter
+from app.cmp_physics import Physics
+from app.cmp_renderable import Renderable
+from app.cmp_segment import Segment
+from app.cmp_temp_live import TempLive
+from app.cmp_transform import Transform
+from app.prc import Processor
+
 
 class Factory(Processor):
     def __init__(self):
