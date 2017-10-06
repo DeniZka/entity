@@ -7,6 +7,7 @@ from prc_camera import CameraProcessor
 from cmp_physics import Physics
 from prc_ui import UIProcessor
 from pymunk.pyglet_util import DrawOptions
+from pyglet.graphics import OrderedGroup
 
 
 class TextureRenderProcessor(Processor):
@@ -15,10 +16,10 @@ class TextureRenderProcessor(Processor):
         super().__init__()
         Renderable.batch = pyglet.graphics.Batch()
         Renderable.ui_batch = pyglet.graphics.Batch()
-        Renderable.bg = pyglet.graphics.OrderedGroup(0)
-        Renderable.mg = pyglet.graphics.OrderedGroup(1)
-        Renderable.fg = pyglet.graphics.OrderedGroup(2)
-        Renderable.ui = pyglet.graphics.OrderedGroup(3)
+        Renderable.bg = RendOrderGroup(0)
+        Renderable.mg = RendOrderGroup(1)
+        Renderable.fg = RendOrderGroup(2)
+        Renderable.ui = RendOrderGroup(3)
 
         self.cam = None
 
@@ -65,9 +66,12 @@ class TextureRenderProcessor(Processor):
             rend.vertex_list.colors[:] = rend.colors
 
     def on_draw(self):
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+
         self.cam.apply_transform()
-        if self.debug_draw:
-            Physics.space.debug_draw(self.opt)
+        #if self.debug_draw:
+        #    Physics.space.debug_draw(self.opt)
 
         if Renderable.bg_image:
             #TODO: blit HIDING mask on Car texture so if it on hiden segment
@@ -83,4 +87,15 @@ class TextureRenderProcessor(Processor):
 
         if self.debug_draw:
             self.fps_display.draw()
+
+
+class RendOrderGroup(OrderedGroup):
+    def __init__(self, order, parent=None):
+        super().__init__(order, parent)
+
+    def set_state(self):
+        return
+        #this added grlobaly
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 

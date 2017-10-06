@@ -1,10 +1,10 @@
 from pyglet.gl import *
 from pymunk import Vec2d
 from cmp import Component
-#TODO: GRAPHICS IS NOT MOVING CAUSE OF POS prop is not calling
+
 
 class Renderable(Component):
-    batch = None #easy access to batch group from everywhere
+    batch = None  # easy access to batch group from everywhere
     ui_batch = None
     bg = None
     mg = None
@@ -123,6 +123,8 @@ class TextureBindGroup(pyglet.graphics.Group):
         glEnable(self.texture.target) #Fied disappeared textures
         glBindTexture(GL_TEXTURE_2D, self.texture.id)
         glPushAttrib(GL_COLOR_BUFFER_BIT)
+        return
+        # this added globaly
         glEnable(GL_BLEND)
         glBlendFunc(self.blend_src, self.blend_dest)
 

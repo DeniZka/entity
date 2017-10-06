@@ -17,6 +17,7 @@ import xml.etree.ElementTree as ET
 from cmp_segment import Segment
 from pyglet.gl import *
 from random import randint
+from cmp_instance import Instance
 
 class Factory(Processor):
     def __init__(self):
@@ -55,7 +56,8 @@ class Factory(Processor):
         Physics.space.add(lines)
 
         #load tracks
-        self.tree = ET.parse("res/Plymouth.rwm")
+        f = open("res/Plymouth.rwm")
+        self.tree = ET.parse(f)
         self.root = self.tree.getroot()
         self.meta = self.root[0]
         fn = "res/" + self.meta[1].attrib["File"]
@@ -105,6 +107,7 @@ class Factory(Processor):
         return self.environment
 
     def testing(self):
+        #alone green point
         e = self.world.create_entity()
         r = Renderable(atype=GL_POINTS)
         r.colors = [20, 255, 0, 255 ]
@@ -112,7 +115,7 @@ class Factory(Processor):
         self.world.add_component(e, r)
         self.world.add_component(e, t)
 
-
+        #5 circles scaled from anchor point
         for i in range(1, 6):
             e = self.world.create_entity()
             r = Renderable(self.texture_from_image("joint.png"))
@@ -123,50 +126,14 @@ class Factory(Processor):
             self.world.add_component(e, r)
             self.world.add_component(e, t)
 
+        #Unzumable test
         e = self.world.create_entity()
         r = Renderable(self.texture_from_image("joint.png"))
         r.colors = [255, 0, 0, 255] * 4
-        T = Transform(Vec2d(150, 150), 10, 10)
-        T.unzoomable = True
-        self.world.add_component(e, r)
-        self.world.add_component(e, T)
-        #top line
-        e = self.world.create_entity()
-        r = Renderable(atype=GL_LINES)
-        r.colors = [255, 0, 0, 255] * 2
-        t = Transform(Vec2d(0,0))
-        t._pos[1] = Vec2d(50, 0)
-        t.parent = T
+        t = Transform(Vec2d(150, 150), 10, 10)
+        t.unzoomable = True
         self.world.add_component(e, r)
         self.world.add_component(e, t)
-        #left line
-        e = self.world.create_entity()
-        r = Renderable(atype=GL_LINES)
-        r.colors = [255, 0, 0, 255] * 2
-        t = Transform(Vec2d(0,0))
-        t._pos[1] = Vec2d(0, -100)
-        t.parent = T
-        self.world.add_component(e, r)
-        self.world.add_component(e, t)
-        #right line
-        e = self.world.create_entity()
-        r = Renderable(atype=GL_LINES)
-        r.colors = [255, 0, 0, 255] * 2
-        t = Transform(Vec2d(50,0))
-        t._pos[1] = Vec2d(50, -100)
-        t.parent = T
-        self.world.add_component(e, r)
-        self.world.add_component(e, t)
-        #bottom line
-        e = self.world.create_entity()
-        r = Renderable(atype=GL_LINES)
-        r.colors = [255, 0, 0, 255] * 2
-        t = Transform(Vec2d(0,-100))
-        t._pos[1] = Vec2d(50, -100)
-        t.parent = T
-        self.world.add_component(e, r)
-        self.world.add_component(e, t)
-
         return
 
     def createPlayer(self, pos):
@@ -369,6 +336,56 @@ class Factory(Processor):
             Physics.space.remove(phy.shape, phy.body)
             self.world.delete_entity(enity)
     """
+
+    def create_instance(self, pos):
+
+        e = self.world.create_entity()
+        T = Transform(pos, 50, 100)  #main bounding sizes
+        T.anchor = Vec2d(0, 0)
+        i = Instance()
+        r = Renderable()
+        r.colors = [0, 0, 255, 100] * 4
+        self.world.add_component(e, i)
+        self.world.add_component(e, r)
+        self.world.add_component(e, T)
+
+        #top line
+        e = self.world.create_entity()
+        r = Renderable(atype=GL_LINES)
+        r.colors = [255, 0, 0, 255] * 2
+        t = Transform(Vec2d(0,0))
+        t._pos[1] = Vec2d(50, 0)
+        t.parent = T
+        self.world.add_component(e, r)
+        self.world.add_component(e, t)
+        #left line
+        e = self.world.create_entity()
+        r = Renderable(atype=GL_LINES)
+        r.colors = [255, 0, 0, 255] * 2
+        t = Transform(Vec2d(0,0))
+        t._pos[1] = Vec2d(0, 100)
+        t.parent = T
+        self.world.add_component(e, r)
+        self.world.add_component(e, t)
+        #right line
+        e = self.world.create_entity()
+        r = Renderable(atype=GL_LINES)
+        r.colors = [255, 0, 0, 255] * 2
+        t = Transform(Vec2d(50,0))
+        t._pos[1] = Vec2d(50, 100)
+        t.parent = T
+        self.world.add_component(e, r)
+        self.world.add_component(e, t)
+        #bottom line
+        e = self.world.create_entity()
+        r = Renderable(atype=GL_LINES)
+        r.colors = [255, 0, 0, 255] * 2
+        t = Transform(Vec2d(0,100))
+        t._pos[1] = Vec2d(50, 100)
+        t.parent = T
+        self.world.add_component(e, r)
+        self.world.add_component(e, t)
+
 
     def process(self, dt):         #check died entity by ttl
         #"""

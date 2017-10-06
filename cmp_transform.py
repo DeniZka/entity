@@ -7,8 +7,13 @@ class Transform(Component):
     check pre_ for to check it was updated
     """
     def __init__(self, pos, w=0, h=0, angle=0):
+        #TODO: BB
+        self._bb = [
+            Vec2d(0, 0),  # min
+            Vec2d(0, 0)   # max
+        ]
         self._parent = None  # relative posititoning
-        self._ppos = Vec2d(0,0) # parent positioning
+        self._ppos = Vec2d(0, 0)  # parent positioning
         self._childs = []
         self._pos = [
             Vec2d(0, 0),    # for sprite anchor
@@ -16,19 +21,19 @@ class Transform(Component):
             Vec2d(0, 0),    # for futurer modifible quad
             Vec2d(0, 0)     # for futurer modifible quad
         ]
-        self._v = [         # final counted vertixes
-            Vec2d(0, 0),    # for sprite anchor
-            Vec2d(0, 0),    # for line
-            Vec2d(0, 0),    # for futurer modifible quad
-            Vec2d(0, 0)     # for futurer modifible quad
+        self._v = [       # final counted vertixes
+            Vec2d(0, 0),  # for sprite anchor
+            Vec2d(0, 0),  # for line
+            Vec2d(0, 0),  # for futurer modifible quad
+            Vec2d(0, 0)   # for futurer modifible quad
         ]
-        if pos:
-            self._pos[0] = pos
         self._anchor = Vec2d(0.0, 0.0)
         self._w = 0
         if w:
             self._w = w
             self._anchor.x = w/2
+        if pos:
+            self._pos[0] = pos
         self._h = 0
         if h:
             self._h = h
@@ -44,6 +49,8 @@ class Transform(Component):
 
         self.unzoomable = False  # camera zoom does not affect renderable sizes
         self.last_cam_zoom = 1   #
+        self.update_vertix()
+        self.calc_bb()
 
     def _set_modified(self):
         """
@@ -228,8 +235,33 @@ class Transform(Component):
                 self.parent._childs.remove(self)
 
     def scale_to(self, des_wh):
-        #rescale
+        #TODO rescale
         return
+
+    def calc_bb(self):
+        self._bb[0].x = self._v[0].x
+        self._bb[0].y = self._v[0].y
+        self._bb[1].x = self._v[0].x
+        self._bb[1].y = self._v[0].y
+        for i in range(1, 4):
+            # minimal point
+            if self._v[i].x < self._bb[0].x:
+                self._bb[0].x = self._v[i].x
+            if self._v[i].y < self._bb[0].y:
+                self._bb[0].y = self._v[i].y
+            # maximal point
+            if self._v[i].x > self._bb[1].x:
+                self._bb[1].x = self._v[i].x
+            if self._v[i].y > self._bb[1].y:
+                self._bb[1].y = self._v[i].y
+
+    def get_in_bb(self, pos):
+        if self._bb[0].x < pos.x < self._bb[1].x and \
+           self._bb[0].y < pos.y < self._bb[1].y:
+            return pos - self._pos[0]
+        else:
+            return None
+
 
     def update_vertix(self):
         if self.parent:
@@ -289,6 +321,7 @@ class Transform(Component):
                 self.update_vertix()
 
         self._modified = False
+        self.calc_bb()
 
         return [
             self._v[0].x, self._v[0].y,
@@ -296,6 +329,4 @@ class Transform(Component):
             self._v[2].x, self._v[2].y,
             self._v[3].x, self._v[3].y
         ]
-
-
 

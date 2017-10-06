@@ -5,6 +5,8 @@ from cmp_segment import Segment
 from prc_camera import CameraProcessor
 from pymunk import Vec2d
 from factory import Factory
+from cmp_instance import Instance
+from cmp_renderable import Renderable
 
 
 class EditorProcessor(Processor):
@@ -16,6 +18,7 @@ class EditorProcessor(Processor):
         self.picked = None
         self.picked_id = -1
         self.picked_jnt = None
+        self.picked_shift_v = Vec2d(0, 0)
         self.merge_limit = 4
         self.cam_rotating = False
         self.cam_rot_angle = 0
@@ -72,7 +75,19 @@ class EditorProcessor(Processor):
     def on_mouse_press(self, x, y, button, modifiers):
         if button == 1:
             w = self.cam.to_world(Vec2d(x, y))
+            # find an instance
+            for ent, (tr, inst, r) in self.world.get_components(Transform, Instance, Renderable):
+                if self.world.has_component(ent, Joint):
+                    continue
+                if tr.parent:
+                    continue
+                sv = tr.get_in_bb(w)
+                if sv:
+                    self.picked = [tr]
+                    self.picked_shift_v = sv
+                    return
 
+            # find a join
             found = False
             for ent, (tr, jnt) in self.world.get_components(Transform, Joint):
                 if self.contact_dist(tr.pos, w):
@@ -104,8 +119,8 @@ class EditorProcessor(Processor):
             #code
             #measure distance to mouse point
             #if distance lesser then X - SNAP
-            self.picked[0].x = w.x
-            self.picked[0].y = w.y
+            self.picked[0].x = w.x - self.picked_shift_v.x
+            self.picked[0].y = w.y - self.picked_shift_v.y
             for v in self.picked:
                 v._set_modified()
         if buttons == 2:
@@ -115,6 +130,8 @@ class EditorProcessor(Processor):
             self.cam_rot_angle = a
 
     def on_mouse_release(self, x, y, button, modifiers):
+        self.picked_shift_v.x = 0
+        self.picked_shift_v.y = 0
         if button == 1 and self.picked:
             w = self.cam.to_world(Vec2d(x, y))
             cnt = len(self.picked) - 1

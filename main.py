@@ -1,6 +1,6 @@
 import pyglet
 from pyglet.gl import *
-import ecs
+from ecs import Ecs
 from prc_render import TextureRenderProcessor
 from factory import Factory
 from hnd_window import WindowHandler
@@ -22,7 +22,7 @@ def run(args=None):
 
     # Initialize Esper world, and create a "player" Entity with a few Components.
     #world = esper.World()
-    world = ecs.Ecs()
+    world = Ecs()
     world.win_hnd = win_handler
 
 
@@ -56,6 +56,7 @@ def run(args=None):
     #factory was added to processor so we can add come things into
     factory.testing()
     factory.createEnv()
+    factory.create_instance(Vec2d(200, 300))
     #player = factory.createPlayer(Vec2d(100,100))
     #camera.target = player[1]
     #enemy = factory.createEnemy(Vec2d(100,250))
@@ -69,6 +70,7 @@ def run(args=None):
     pyglet.clock.schedule_interval(update, 1.0 / (WindowHandler.FPS*2))
     pyglet.app.run()
 
-if __name__ == "__main__":
-    import sys
-    sys.exit(run(sys.argv[1:]) or 0)
+
+
+#if __name__ == "__main__":
+
