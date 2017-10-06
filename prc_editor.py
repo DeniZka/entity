@@ -97,6 +97,13 @@ class EditorProcessor(Processor):
     def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
         if self.picked:
             w = self.cam.to_world(Vec2d(x, y))
+            # TODO auto snapping
+            #get nearest joint
+            #code
+            #translate nearest joint point to screen x,y
+            #code
+            #measure distance to mouse point
+            #if distance lesser then X - SNAP
             self.picked[0].x = w.x
             self.picked[0].y = w.y
             for v in self.picked:

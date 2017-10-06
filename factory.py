@@ -281,6 +281,7 @@ class Factory(Processor):
         r.colors = [255, 0, 0, 255] * 4
         t = Transform(Vec2d(0, 0), 10, 20)
         t.parent = tr
+        t._set_modified()
         self.world.add_component(ent, r)
         self.world.add_component(ent, t)
 

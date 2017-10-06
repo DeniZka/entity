@@ -24,9 +24,9 @@ class Renderable(Component):
         else:
             self.group = Renderable.mg
         self.vertex_list = None
-        self.colors = [255, 255, 255, 255] * 4
-        self.sub_colors = self.colors
-        self.sub_modif = True  # support for smooth coloring in dt
+        self._colors = [255, 255, 255, 255] * 4
+        self.sub_colors = self._colors
+        self._modified = True  # support for smooth coloring in dt
 
         vertex_format = 'v2f/stream'
         if texture:
@@ -66,6 +66,21 @@ class Renderable(Component):
             else:
                 assert (False), "WRONG atype"
 
+    @property
+    def colors(self):
+        self._modified = False
+        return self._colors
+
+
+    @colors.setter
+    def colors(self, val):
+        self._colors = val
+        self._modified = True
+
+    @property
+    def modified(self):
+        return self._modified
+
     def on_remove(self):
         if self.vertex_list:
             self.vertex_list.delete()
@@ -76,8 +91,8 @@ class Renderable(Component):
     def set_sub_colors(self, colors):
         self.sub_colors = colors
         for i in range(16):
-            self.colors[i] = int(self.sub_colors[i])
-        self.sub_modif = True
+            self._colors[i] = int(self.sub_colors[i])
+        self._modified = True
 
 # Code below cobbled together from
 # https://pyglet.readthedocs.org/en/latest/programming_guide/graphics.html#hierarchical-state

@@ -40,65 +40,23 @@ class TextureRenderProcessor(Processor):
 
     def process(self, dt):
         for e, (tr, rend) in self.world.get_components(Transform, Renderable):
-            if tr.modified(self.cam.zoom):
-                self.update_verts(tr, rend)
+            if rend.modified:
+                rend.vertex_list.colors[:] = rend.colors
 
-    def update_verts(self, tr, rend):
-        if rend.sub_modif:
-            rend.vertex_list.colors[:] = rend.colors
-
-        if rend.atype == GL_POINTS:
-            rend.vertex_list.vertices[:] = [tr.x, tr.y]
-            return
-
-        if rend.atype == GL_LINES:
-            rend.vertex_list.vertices[:] = [
-                tr.x,
-                tr.y,
-                tr.x1,
-                tr.y1
-            ]
-            #make tratsform unmodified
-            tr.redrawed()
-        else:
-            #quads
-            if not tr.unzoomable:
-                v1 = Vec2d(-tr.anchor.x * tr.scale.x, -tr.anchor.y * tr.scale.y)
-                v1.rotate(tr.angle)
-                v1 = v1 + tr.pos
-
-                v2 = Vec2d((tr.w - tr.anchor.x) * tr.scale.x, -tr.anchor.y * tr.scale.y)
-                v2.rotate(tr.angle)
-                v2 = v2 + tr.pos
-
-                v3 = Vec2d((tr.w - tr.anchor.x)*tr.scale.x, (tr.h - tr.anchor.y)*tr.scale.y)
-                v3.rotate(tr.angle)
-                v3 = v3 + tr.pos
-
-                v4 = Vec2d(-tr.anchor.x*tr.scale.x, (tr.h - tr.anchor.y)*tr.scale.y)
-                v4.rotate(tr.angle)
-                v4 = v4 + tr.pos
-                rend.vertex_list.vertices[:] = [v1.x, v1.y, v2.x, v2.y, v3.x, v3.y, v4.x, v4.y]
-            else:
-                v1 = Vec2d(-tr.anchor.x / self.cam.zoom, -tr.anchor.y / self.cam.zoom)
-                v1.rotate(tr.angle)
-                v1 = v1 + tr.pos
-
-                v2 = Vec2d((tr.w - tr.anchor.x) / self.cam.zoom, -tr.anchor.y / self.cam.zoom)
-                v2.rotate(tr.angle)
-                v2 = v2 + tr.pos
-
-                v3 = Vec2d((tr.w - tr.anchor.x)/self.cam.zoom, (tr.h - tr.anchor.y)/self.cam.zoom)
-                v3.rotate(tr.angle)
-                v3 = v3 + tr.pos
-
-                v4 = Vec2d(-tr.anchor.x/self.cam.zoom, (tr.h - tr.anchor.y)/self.cam.zoom)
-                v4.rotate(tr.angle)
-                v4 = v4 + tr.pos
-                rend.vertex_list.vertices[:] = [v1.x, v1.y, v2.x, v2.y, v3.x, v3.y, v4.x, v4.y]
-
-            #made unmodified
-            tr.redrawed()
+            if tr.modified:
+                if rend.atype == GL_POINTS:
+                    rend.vertex_list.vertices[:] = [tr.x, tr.y]
+                elif rend.atype == GL_LINES:
+                    rend.vertex_list.vertices[:] = [
+                        tr.x,
+                        tr.y,
+                        tr.x1,
+                        tr.y1
+                    ]
+                    # make tratsform unmodified
+                    tr.redrawed()
+                else:
+                    rend.vertex_list.vertices[:] = tr.vertixes(self.cam.zoom)
 
     def draw_texture(self, rend, entity):
         texture = rend.texture

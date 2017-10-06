@@ -8,6 +8,7 @@ class Transform(Component):
     """
     def __init__(self, pos, w=0, h=0, angle=0):
         self._parent = None  # relative posititoning
+        self._ppos = Vec2d(0,0) # parent positioning
         self._childs = []
         self._pos = [
             Vec2d(0, 0),    # for sprite anchor
@@ -60,21 +61,6 @@ class Transform(Component):
         """
         self._modified = False
 
-
-    def modified(self, zoom=None):
-        """
-
-        :param zoom: for unzumable transformations only
-        :return:
-        """
-        # check unzumable objects
-        if self.unzoomable and zoom:
-            if zoom != self.last_cam_zoom:
-                self.last_cam_zoom = zoom
-                self._set_modified()
-
-        return self._modified
-
     def other_point(self, val):
         """
         Used for lines with two _pos
@@ -94,6 +80,10 @@ class Transform(Component):
                 self._pos[i] = self_dest
                 return True
         return False
+
+    @property
+    def modified(self):
+        return self._modified
 
     @property
     def pos(self):
@@ -233,12 +223,75 @@ class Transform(Component):
             if self.parent:
                 self.parent._childs.remove(self)
 
-    def vertixes(self, count):
-        return v[:count]
-
     def scale_to(self, des_wh):
         #rescale
         return
+
+    def update_vertix(self):
+        if self.parent:
+            self._ppos.x = self.parent.x
+            self._ppos.y = self.parent.y
+        self._v[0] = Vec2d(-self._anchor.x * self._scale.x,
+                           -self._anchor.y * self._scale.y)
+        self._v[0].rotate(self._angle)
+        self._v[0] = self._v[0] + self._pos[0] + self._ppos
+
+        self._v[1] = Vec2d((self._w - self._anchor.x) * self._scale.x,
+                           -self._anchor.y * self._scale.y)
+        self._v[1].rotate(self._angle)
+        self._v[1] = self._v[1] + self._pos[0] + self._ppos
+
+        self._v[2] = Vec2d((self._w - self._anchor.x) * self._scale.x,
+                           (self._h - self._anchor.y) * self._scale.y)
+        self._v[2].rotate(self._angle)
+        self._v[2] = self._v[2] + self._pos[0] + self._ppos
+
+        self._v[3] = Vec2d(-self._anchor.x * self._scale.x,
+                           (self._h - self._anchor.y) * self._scale.y)
+        self._v[3].rotate(self._angle)
+        self._v[3] = self._v[3] + self._pos[0] + self._ppos
+
+    def update_vertix_uz(self, zoom):
+        if self.parent:
+            self._ppos.x = self.parent.x
+            self._ppos.y = self.parent.y
+        self._v[0] = Vec2d(-self._anchor.x / self.last_cam_zoom,
+                           -self._anchor.y / self.last_cam_zoom)
+        self._v[0].rotate(self._angle)
+        self._v[0] = self._v[0] + self._pos[0] + self._ppos
+
+        self._v[1] = Vec2d((self._w - self._anchor.x) / self.last_cam_zoom,
+                           -self._anchor.y / self.last_cam_zoom)
+        self._v[1].rotate(self._angle)
+        self._v[1] = self._v[1] + self._pos[0] + self._ppos
+
+        self._v[2] = Vec2d((self._w - self._anchor.x) / self.last_cam_zoom,
+                           (self._h - self._anchor.y) / self.last_cam_zoom)
+        self._v[2].rotate(self._angle)
+        self._v[2] = self._v[2] + self._pos[0] + self._ppos
+
+        self._v[3] = Vec2d(-self._anchor.x / self.last_cam_zoom,
+                           (self._h - self._anchor.y) / self.last_cam_zoom)
+        self._v[3].rotate(self._angle)
+        self._v[3] = self._v[3] + self._pos[0] + self._ppos
+
+    def vertixes(self, zoom=None):
+        if self.unzoomable:
+            if self.last_cam_zoom != zoom or self._modified:
+                self.last_cam_zoom = zoom
+                self.update_vertix_uz(zoom)
+        else:
+            if self._modified:
+                self.update_vertix()
+
+        self._modified = False
+
+        return [
+            self._v[0].x, self._v[0].y,
+            self._v[1].x, self._v[1].y,
+            self._v[2].x, self._v[2].y,
+            self._v[3].x, self._v[3].y
+        ]
 
 
 
