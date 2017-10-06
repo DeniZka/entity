@@ -1,7 +1,9 @@
-from prc import Processor
-from pymunk import Vec2d
-from pyglet.gl import *
 import math
+
+from pyglet.gl import *
+from pymunk import Vec2d
+
+from code.prc import Processor
 
 
 class CameraProcessor(Processor):

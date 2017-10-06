@@ -1,6 +1,5 @@
 from pyglet.gl import *
-from pymunk import Vec2d
-from cmp import Component
+from code.cmp import Component
 
 
 class Renderable(Component):

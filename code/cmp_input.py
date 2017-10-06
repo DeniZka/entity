@@ -1,4 +1,4 @@
-from cmp import Component
+from code.cmp import Component
 
 
 class Input(Component):

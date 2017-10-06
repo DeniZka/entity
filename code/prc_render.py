@@ -1,13 +1,13 @@
-from prc import Processor
 from pyglet.gl import *
-from cmp_renderable import Renderable
-from cmp_transform import Transform
-from pymunk import Vec2d
-from prc_camera import CameraProcessor
-from cmp_physics import Physics
-from prc_ui import UIProcessor
-from pymunk.pyglet_util import DrawOptions
 from pyglet.graphics import OrderedGroup
+from pymunk.pyglet_util import DrawOptions
+
+from code.cmp_renderable import Renderable
+from code.cmp_transform import Transform
+from code.prc import Processor
+from code.prc_camera import CameraProcessor
+from code.prc_ui import UIProcessor
+
 
 
 class TextureRenderProcessor(Processor):

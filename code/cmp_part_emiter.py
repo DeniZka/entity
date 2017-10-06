@@ -1,5 +1,6 @@
 from pymunk import Vec2d
-from cmp import Component
+
+from code.cmp import Component
 
 """Pos and angle updates by body if emitter on it
 """

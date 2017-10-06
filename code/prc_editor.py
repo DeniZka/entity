@@ -1,12 +1,12 @@
-from prc import Processor
-from cmp_joint import Joint
-from cmp_transform import Transform
-from cmp_segment import Segment
-from prc_camera import CameraProcessor
 from pymunk import Vec2d
-from factory import Factory
-from cmp_instance import Instance
-from cmp_renderable import Renderable
+
+from code.cmp_joint import Joint
+from code.cmp_renderable import Renderable
+from code.cmp_transform import Transform
+from code.factory import Factory
+from code.prc import Processor
+from code.prc_camera import CameraProcessor
+from code.cmp_instance import Instance
 
 
 class EditorProcessor(Processor):

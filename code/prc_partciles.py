@@ -1,14 +1,15 @@
-from prc import Processor
-import pymunk
-from pymunk import Vec2d
 import random
 import pyglet
-from cmp_part_emiter import ParticleEmiter
-from cmp_part_behave import ParticleBehave
-from cmp_renderable import Renderable
-from cmp_temp_live import TempLive
-from cmp_physics import Physics
-from cmp_input import Input
+import pymunk
+from pymunk import Vec2d
+
+from code.cmp_input import Input
+from code.cmp_part_behave import ParticleBehave
+from code.cmp_part_emiter import ParticleEmiter
+from code.cmp_renderable import Renderable
+from code.cmp_temp_live import TempLive
+from code.prc import Processor
+from code.cmp_physics import Physics
 
 """
 ParticleProcessor works with particles: Emit, Move, Destroy

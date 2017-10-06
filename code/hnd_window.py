@@ -1,12 +1,11 @@
+import time
+
 import pyglet
-from pymunk import Vec2d
 from pyglet.gl import *
 from pyglet.window import key
-from cmp_renderable import Renderable
-from cmp_input import Input
-import time
-import math
-from cmp_physics import Physics
+
+from code.cmp_input import Input
+
 
 class WindowHandler(pyglet.window.Window):
     res = 720, 480

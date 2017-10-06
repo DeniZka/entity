@@ -1,9 +1,10 @@
-from prc import Processor
 import pymunk
 from pymunk import Vec2d
-from cmp_physics import Physics
-from cmp_hp import Hp
-from prc_partciles import ParticleProcessor
+
+from code.cmp_hp import Hp
+from code.prc import Processor
+from code.prc_partciles import ParticleProcessor
+from code.cmp_physics import Physics
 
 
 class PhysicsProcessor(Processor):

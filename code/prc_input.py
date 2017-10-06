@@ -1,11 +1,12 @@
-from prc import Processor
-from cmp_physics import Physics
-from cmp_input import Input
-from pymunk import Vec2d
-from cmp_cannon import Cannon
-from prc_camera import CameraProcessor
-from pyglet.window import key
 import math
+from pyglet.window import key
+from pymunk import Vec2d
+
+from code.cmp_cannon import Cannon
+from code.cmp_input import Input
+from code.prc import Processor
+from code.prc_camera import CameraProcessor
+from code.cmp_physics import Physics
 
 
 class InputProcessor(Processor):
