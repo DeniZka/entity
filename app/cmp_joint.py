@@ -6,13 +6,12 @@ Segments terminal
 
 class Joint(Component):
 
-    def __init__(self, id, pos):
+    def __init__(self, id):
         self.id = id
         self.ios = []
         self.ins = [-1, -1]
         self.outs = [-1, -1]
         self.ways = 0
-        self.pos = pos
         self.sw_out = -1 #index of output
         self.sw_in = -1  #index of input in cross
 

@@ -8,7 +8,6 @@ class Transform(Component):
     check pre_ for to check it was updated
     """
     def __init__(self, pos, w=0, h=0, angle=0):
-        #TODO: BB
         self._bb = [
             Vec2d(0, 0),  # min
             Vec2d(0, 0)   # max
@@ -99,17 +98,38 @@ class Transform(Component):
 
     @property
     def pos(self):
+        """
+        :return: local position
+        """
         return self._pos[0]
 
     @pos.setter
     def pos(self, val):
+        """
+        Sets a local position
+        :param val:
+        :return:
+        """
         if val != self._pos[0]:
             self._pos[0] = val
             self._set_modified()
 
     @property
+    def g_pos(self):
+        """
+        :return: global position calculated from the parents
+        """
+        if self.parent:
+            return self.parent.g_pos + self._pos[0]
+        else:
+            return self._pos[0]
+
+    @property
     def angle(self):
-        return self._angle
+        if self.parent:
+            return self.parent.angle + self._angle
+        else:
+            return self._angle
 
     @angle.setter
     def angle(self, val):
@@ -288,7 +308,7 @@ class Transform(Component):
         self._v[3].rotate(self._angle)
         self._v[3] = self._v[3] + self._pos[0] + self._ppos
 
-    def update_vertix_uz(self, zoom):
+    def update_vertix_uz(self, zoom):  # FIXME: unzoomable sprites does not show at begin
         if self.parent:
             self._ppos.x = self.parent.x
             self._ppos.y = self.parent.y

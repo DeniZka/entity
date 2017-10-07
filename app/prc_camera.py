@@ -68,7 +68,7 @@ class CameraProcessor(Processor):
         :param world:
         :return:
         """
-        sub_v = world - self.pos  # TODO check camera unwrapping
+        sub_v = world - self.pos
         sub_v.rotate(-self.angle)
         sub_v = sub_v * self.zoom + CameraProcessor.hres
         return sub_v

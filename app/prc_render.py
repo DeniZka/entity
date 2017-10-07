@@ -93,6 +93,7 @@ class RendOrderGroup(OrderedGroup):
         super().__init__(order, parent)
 
     def set_state(self):
+        #glLineWidth(3)
         return
         #this added grlobaly
         glEnable(GL_BLEND)

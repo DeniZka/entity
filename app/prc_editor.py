@@ -1,4 +1,5 @@
 from pymunk import Vec2d
+import pyglet
 
 from app.cmp_instance import Instance
 from app.cmp_joint import Joint
@@ -8,21 +9,23 @@ from app.factory import Factory
 from app.prc import Processor
 from app.prc_camera import CameraProcessor
 
+SQ_SNAP_DISTANCE = 200  # snapping distance when drag a joint (in screen pixels)
+SQ_SENSE_RAD = 10       # additional radius when joint dropped near
+JOINT_WAYS_LIMIT = 4    # maximuum of connected segments (NEED TO BE CORRECTED IN JOINT TOO)
+
 
 class EditorProcessor(Processor):
 
     def __init__(self):
         self.subscribed = False
-        self.sq_sense_rad = 10
         self.cam = None
         self.picked = None
         self.picked_id = -1
         self.picked_jnt = None
         self.picked_shift_v = Vec2d(0, 0)
-        self.merge_limit = 4
         self.cam_rotating = False
         self.cam_rot_angle = 0
-        return
+
 
     def on_add(self, proc):
         if proc == self:
@@ -33,6 +36,8 @@ class EditorProcessor(Processor):
         if proc.__class__ is CameraProcessor:
             self.cam = proc
 
+
+
     def contact_dist(self, pt1, pt2):
         """
         Those points are one the taking/connecting distance
@@ -41,7 +46,7 @@ class EditorProcessor(Processor):
         :return: boolean
         """
         r = pt1 - pt2
-        if r.get_length_sqrd() < self.sq_sense_rad:
+        if r.get_length_sqrd() < SQ_SENSE_RAD:
             return True
         else:
             return False
@@ -75,7 +80,7 @@ class EditorProcessor(Processor):
     def on_mouse_press(self, x, y, button, modifiers):
         if button == 1:
             w = self.cam.to_world(Vec2d(x, y))
-            # find an instance
+            # find an pickable instance
             for ent, (tr, inst, r) in self.world.get_components(Transform, Instance, Renderable):
                 if self.world.has_component(ent, Joint):
                     continue
@@ -87,7 +92,7 @@ class EditorProcessor(Processor):
                     self.picked_shift_v = sv
                     return
 
-            # find a join
+            # nothing to pick -> find a join
             found = False
             for ent, (tr, jnt) in self.world.get_components(Transform, Joint):
                 if self.contact_dist(tr.pos, w):
@@ -99,30 +104,42 @@ class EditorProcessor(Processor):
                         break
 
             if not found:
+                # no joint -> create segment and pick it
                 factory = self.world.get_processor(Factory)
                 seg = factory.create_segment(w)
                 self.picked_id = seg[0]
                 self.picked_jnt = seg[1]
                 self.picked = seg[2]
+
         if button == 2:
             v = Vec2d(x - self.world.win_hnd.res[0]*0.5, y - self.world.win_hnd.res[1]*0.5)
             self.cam_rot_angle = v.angle
 
-
     def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
         if self.picked:
-            w = self.cam.to_world(Vec2d(x, y))
-            # TODO auto snapping
-            #get nearest joint
-            #code
-            #translate nearest joint point to screen x,y
-            #code
-            #measure distance to mouse point
-            #if distance lesser then X - SNAP
+            scr_v = Vec2d(x, y)
+            w = self.cam.to_world(scr_v)
+            min_dist = 1000000
+            near_tr = None
+            # FIXME: may be need an updatin delay for eficient
+            for ent, (tr, jnt) in self.world.get_components(Transform, Joint):
+                if tr == self.picked[0]:
+                    continue
+                sq_d = w.get_dist_sqrd(tr.g_pos)
+                if sq_d < min_dist:
+                    min_dist = sq_d
+                    near_tr = tr
+
+            if near_tr:
+                scr_tr_v = self.cam.to_screen(near_tr.g_pos)
+                if (scr_tr_v - scr_v).get_length_sqrd() < SQ_SNAP_DISTANCE:
+                    w = near_tr.g_pos
+
             self.picked[0].x = w.x - self.picked_shift_v.x
             self.picked[0].y = w.y - self.picked_shift_v.y
             for v in self.picked:
                 v._set_modified()
+
         if buttons == 2:
             v = Vec2d(x - self.world.win_hnd.res[0]/2, y - self.world.win_hnd.res[1]/2)
             a = v.angle
@@ -132,12 +149,13 @@ class EditorProcessor(Processor):
     def on_mouse_release(self, x, y, button, modifiers):
         self.picked_shift_v.x = 0
         self.picked_shift_v.y = 0
-        if button == 1 and self.picked:
+        if button == 1 and self.picked and self.picked_jnt:
+            # merge jointes if it able
             w = self.cam.to_world(Vec2d(x, y))
             cnt = len(self.picked) - 1
             for ent, (tr, jnt) in self.world.get_components(Transform, Joint):
                 # check ways total count
-                if jnt.ways + cnt > self.merge_limit:
+                if jnt.ways + cnt > JOINT_WAYS_LIMIT:
                     continue
                 if self.can_merge(self.picked, tr, self.picked[0].pos):
                     # attach to joint
@@ -145,7 +163,7 @@ class EditorProcessor(Processor):
                         jnt.attach(seg_id)
                     # attach to segment
                     for i in range(1, cnt+1):
-                        assert (self.picked[i].replace_pt(self.picked[0].pos, jnt.pos) == True), "Some problem"
+                        assert (self.picked[i].replace_pt(self.picked[0].pos, tr.pos) == True), "Some problem"
                         self.picked[i]._set_modified()
                     self.world.delete_entity(self.picked_id)
                     self.picked_jnt = None
@@ -158,6 +176,5 @@ class EditorProcessor(Processor):
 
     def process(self, dt):
         return
-        #if not self.subscribed:
-            #self.world.get
+
 

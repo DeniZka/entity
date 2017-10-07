@@ -80,15 +80,15 @@ class Factory(Processor):
                 #replace with existing nodes
                 fnd_begin = False
                 fnd_end = False
-                for e, (j, rend) in self.world.get_components(Joint, Renderable):
+                for e, (j, rend, tr) in self.world.get_components(Joint, Renderable, Transform):
                     if not fnd_begin:
-                        if v1.get_dist_sqrd(j.pos) < 1:
-                            v1 = j.pos
+                        if v1.get_dist_sqrd(tr.pos) < 1:
+                            v1 = tr.pos
                             self.joint_mod_colors(rend)
                             begin = j
                     if not fnd_end:
-                        if v2.get_dist_sqrd(j.pos) < 1:
-                            v2 = j.pos
+                        if v2.get_dist_sqrd(tr.pos) < 1:
+                            v2 = tr.pos
                             self.joint_mod_colors(rend)
                             end = j
                     #both found
@@ -275,7 +275,7 @@ class Factory(Processor):
         b_j = begin
         if b_j == None:
             b_ent = self.world.create_entity()
-            b_j = Joint(b_ent, v1)
+            b_j = Joint(b_ent)
             self.world.add_component(b_ent, b_j)
             # transform
             self.world.add_component(b_ent, Transform(v1, 5, 5))
@@ -290,7 +290,7 @@ class Factory(Processor):
         e_ent = 0
         if e_j == None:
             e_ent = self.world.create_entity()
-            e_j = Joint(e_ent, v2)
+            e_j = Joint(e_ent)
             self.world.add_component(e_ent, e_j)
             tr2 = Transform(v2, 5, 5)
             self.world.add_component(e_ent, tr2)
@@ -340,7 +340,7 @@ class Factory(Processor):
     """
 
     def create_instance(self, pos):
-
+        # main body
         e = self.world.create_entity()
         T = Transform(pos, 50, 100)  #main bounding sizes
         T.anchor = Vec2d(0, 0)
@@ -360,6 +360,7 @@ class Factory(Processor):
         t.parent = T
         self.world.add_component(e, r)
         self.world.add_component(e, t)
+
         #left line
         e = self.world.create_entity()
         r = Renderable(atype=GL_LINES)
@@ -369,6 +370,7 @@ class Factory(Processor):
         t.parent = T
         self.world.add_component(e, r)
         self.world.add_component(e, t)
+
         #right line
         e = self.world.create_entity()
         r = Renderable(atype=GL_LINES)
@@ -378,6 +380,7 @@ class Factory(Processor):
         t.parent = T
         self.world.add_component(e, r)
         self.world.add_component(e, t)
+
         #bottom line
         e = self.world.create_entity()
         r = Renderable(atype=GL_LINES)
@@ -388,6 +391,17 @@ class Factory(Processor):
         self.world.add_component(e, r)
         self.world.add_component(e, t)
 
+        #a pin joint
+        pin_pos = Vec2d(0, 13)
+        e_ent = self.world.create_entity()
+        e_j = Joint(e_ent)
+        self.world.add_component(e_ent, e_j)
+        tr2 = Transform(pin_pos, 5, 5)
+        tr2.parent = T
+        self.world.add_component(e_ent, tr2)
+        r = Renderable(self.texture_from_image("joint.png"))
+        r.colors = [255, 0, 0, 255] * 4
+        self.world.add_component(e_ent, r)
 
     def process(self, dt):         #check died entity by ttl
         #"""
