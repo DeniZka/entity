@@ -1,4 +1,5 @@
 from pyglet.gl import *
+from pymunk import Vec2d
 
 from app.cmp import Component
 
@@ -81,6 +82,13 @@ class Renderable(Component):
     def modified(self):
         return self._modified
 
+    @property
+    def size(self):
+        if self.texture:
+            return Vec2d(self.texture.width, self.texture.height)
+        else:
+            return None
+
     def on_remove(self):
         if self.vertex_list:
             self.vertex_list.delete()
@@ -120,7 +128,7 @@ class TextureBindGroup(pyglet.graphics.Group):
         self.blend_dest = GL_ONE_MINUS_SRC_ALPHA
 
     def set_state(self):
-        glEnable(self.texture.target) #Fied disappeared textures
+        glEnable(self.texture.target)  # Fixed disappeared textures
         glBindTexture(GL_TEXTURE_2D, self.texture.id)
         glPushAttrib(GL_COLOR_BUFFER_BIT)
         return

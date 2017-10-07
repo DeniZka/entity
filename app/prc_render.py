@@ -1,6 +1,7 @@
 from pyglet.gl import *
 from pyglet.graphics import OrderedGroup
 from pymunk.pyglet_util import DrawOptions
+from pyglet.text import Label
 
 from app.cmp_renderable import Renderable
 from app.cmp_transform import Transform
@@ -55,6 +56,11 @@ class TextureRenderProcessor(Processor):
                     tr.redrawed()
                 else:
                     rend.vertex_list.vertices[:] = tr.vertixes(self.cam.zoom)
+
+        for e, (tr, l) in self.world.get_components(Transform, Label):
+            if tr.modified:
+                l.x = int(tr.g_pos.x)
+                l.y = int(tr.g_pos.y)
 
     def draw_texture(self, rend, entity):
         texture = rend.texture

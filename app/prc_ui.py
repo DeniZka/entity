@@ -68,7 +68,7 @@ class UIProcessor(Processor):
         tex = pyglet.resource.image("compass.png").get_texture(True)
         rend = Renderable(tex, group=Renderable.ui)
         rend.colors = [255, 255, 255, 150] * 4
-        t = Transform(v, tex.width, tex.height)
+        t = Transform(v, rend.size)
         self.world.add_component(compass, t)
         self.world.add_component(compass, rend)
         self.com_t = t

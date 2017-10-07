@@ -46,7 +46,6 @@ class InputProcessor(Processor):
     def on_remove(self):
         if self.world.win_hnd:
             self.world.win_hnd.unsubscribe("on_key_press", self.sub_id)
-        #TODO: UNSUBSCRIBE
 
     def on_key_press(self, symbol, modifiers):
         if symbol == key.DELETE:

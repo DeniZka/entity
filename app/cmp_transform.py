@@ -7,7 +7,14 @@ class Transform(Component):
     """
     check pre_ for to check it was updated
     """
-    def __init__(self, pos, w=0, h=0, angle=0):
+    def __init__(self, pos, size=Vec2d(0, 0), angle=0, anchor=None):
+        """
+
+        :param pos: anchor point position
+        :param size: initial size of transformable entity (can be grabed from renderable.size() )
+        :param angle: angle in radians
+        :param anchor: center of rotation and scaling
+        """
         self._bb = [
             Vec2d(0, 0),  # min
             Vec2d(0, 0)   # max
@@ -28,16 +35,15 @@ class Transform(Component):
             Vec2d(0, 0)   # for futurer modifible quad
         ]
         self._anchor = Vec2d(0.0, 0.0)
-        self._w = 0
-        if w:
-            self._w = w
-            self._anchor.x = w/2
+        self._size = size
+        if size.x > 0 or size.y > 0:
+            self._anchor = size / 2
+
         if pos:
             self._pos[0] = pos
-        self._h = 0
-        if h:
-            self._h = h
-            self._anchor.y = h/2
+
+
+
         self.pre_pos = Vec2d(0, 0) # for check.. update something like graphics or not
         self._angle = angle
         self.pre_angle = self._angle
@@ -60,6 +66,7 @@ class Transform(Component):
         self._modified = True
         for c in self._childs:
             c._set_modified()
+        self.calc_bb()
 
 
     def redrawed(self):
@@ -120,8 +127,8 @@ class Transform(Component):
         """
         :return: global position calculated from the parents
         """
-        if self.parent:
-            return self.parent.g_pos + self._pos[0]
+        if self._parent:
+            return self._parent.g_pos + self._pos[0]
         else:
             return self._pos[0]
 
@@ -148,15 +155,15 @@ class Transform(Component):
         """
         :return: global position calculated from the parents
         """
-        if self.parent:
-            return self.parent.g_pos + self._pos[1]
+        if self._parent:
+            return self._parent.g_pos + self._pos[1]
         else:
             return self._pos[1]
 
     @property
     def angle(self):
-        if self.parent:
-            return self.parent.angle + self._angle
+        if self._parent:
+            return self._parent.angle + self._angle
         else:
             return self._angle
 
@@ -260,16 +267,16 @@ class Transform(Component):
     @property
     def w(self):
         if self.unzoomable:
-            return self._w
+            return self._size.x
         else:
-            return self._w
+            return self._size.x
 
     @property
     def h(self):
         if self.unzoomable:
-            return self._h
+            return self._size.y
         else:
-            return self._h
+            return self._size.y
 
     @property
     def parent(self):
@@ -281,8 +288,8 @@ class Transform(Component):
             val._childs.append(self)
             self._parent = val
         else:
-            if self.parent:
-                self.parent._childs.remove(self)
+            if self._parent:
+                self._parent._childs.remove(self)
 
     def scale_to(self, des_wh):
         #TODO rescale
@@ -306,58 +313,59 @@ class Transform(Component):
                 self._bb[1].y = self._v[i].y
 
     def get_in_bb(self, pos):
-        if self._bb[0].x < pos.x < self._bb[1].x and \
-           self._bb[0].y < pos.y < self._bb[1].y:
-            return pos + self._pos[0]
+        v = pos - self._pos[0]
+        if self._bb[0].x < v.x < self._bb[1].x and \
+           self._bb[0].y < v.y < self._bb[1].y:
+            return v
         else:
             return None
 
 
     def update_vertix(self):
-        if self.parent:
-            self._ppos.x = self.parent.x
-            self._ppos.y = self.parent.y
+        if self._parent:
+            self._ppos.x = self._parent.x
+            self._ppos.y = self._parent.y
         self._v[0] = Vec2d(-self._anchor.x * self._scale.x,
                            -self._anchor.y * self._scale.y)
         self._v[0].rotate(self._angle)
         self._v[0] = self._v[0] + self._ppos
 
-        self._v[1] = Vec2d((self._w - self._anchor.x) * self._scale.x,
+        self._v[1] = Vec2d((self._size.x - self._anchor.x) * self._scale.x,
                            -self._anchor.y * self._scale.y)
         self._v[1].rotate(self._angle)
         self._v[1] = self._v[1] + self._ppos
 
-        self._v[2] = Vec2d((self._w - self._anchor.x) * self._scale.x,
-                           (self._h - self._anchor.y) * self._scale.y)
+        self._v[2] = Vec2d((self._size.x - self._anchor.x) * self._scale.x,
+                           (self._size.y - self._anchor.y) * self._scale.y)
         self._v[2].rotate(self._angle)
         self._v[2] = self._v[2] + self._ppos
 
         self._v[3] = Vec2d(-self._anchor.x * self._scale.x,
-                           (self._h - self._anchor.y) * self._scale.y)
+                           (self._size.y - self._anchor.y) * self._scale.y)
         self._v[3].rotate(self._angle)
         self._v[3] = self._v[3] + self._ppos
 
     def update_vertix_uz(self, zoom):  # FIXME: unzoomable sprites does not show at begin
-        if self.parent:
-            self._ppos.x = self.parent.x
-            self._ppos.y = self.parent.y
+        if self._parent:
+            self._ppos.x = self._parent.x
+            self._ppos.y = self._parent.y
         self._v[0] = Vec2d(-self._anchor.x / self.last_cam_zoom,
                            -self._anchor.y / self.last_cam_zoom)
         self._v[0].rotate(self._angle)
         self._v[0] = self._v[0] + self._ppos
 
-        self._v[1] = Vec2d((self._w - self._anchor.x) / self.last_cam_zoom,
+        self._v[1] = Vec2d((self._size.x - self._anchor.x) / self.last_cam_zoom,
                            -self._anchor.y / self.last_cam_zoom)
         self._v[1].rotate(self._angle)
         self._v[1] = self._v[1] + self._ppos
 
-        self._v[2] = Vec2d((self._w - self._anchor.x) / self.last_cam_zoom,
-                           (self._h - self._anchor.y) / self.last_cam_zoom)
+        self._v[2] = Vec2d((self._size.x - self._anchor.x) / self.last_cam_zoom,
+                           (self._size.y - self._anchor.y) / self.last_cam_zoom)
         self._v[2].rotate(self._angle)
         self._v[2] = self._v[2] + self._ppos
 
         self._v[3] = Vec2d(-self._anchor.x / self.last_cam_zoom,
-                           (self._h - self._anchor.y) / self.last_cam_zoom)
+                           (self._size.y - self._anchor.y) / self.last_cam_zoom)
         self._v[3].rotate(self._angle)
         self._v[3] = self._v[3] + self._ppos
 

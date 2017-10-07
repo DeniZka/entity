@@ -3,8 +3,8 @@ import xml.etree.ElementTree as ET
 from random import randint
 
 import pyglet
-import pymunk
 from pyglet.gl import *
+import pymunk
 from pymunk import Vec2d
 
 from app.cmp_cannon import Cannon
@@ -47,7 +47,7 @@ class Factory(Processor):
             pymunk.Segment(Physics.space.static_body, Vec2d(720, 0), Vec2d(720, 480), 6)
         ]
 
-        self.world.add_component(self.environment, Transform(Vec2d(7200/2, 0), 7200, 20))
+        self.world.add_component(self.environment, Transform(Vec2d(7200/2, 0), Vec2d(7200, 20)))
         base = Renderable()
         base.colors = [0, 200, 0, 255] * 4
         self.world.add_component(self.environment, base)
@@ -122,7 +122,7 @@ class Factory(Processor):
             e = self.world.create_entity()
             r = Renderable(self.texture_from_image("joint.png"))
             r.colors = [randint(0, 255), randint(0,255), randint(0,255), 255] * 4
-            t = Transform(Vec2d(300, 300), 10, 10)
+            t = Transform(Vec2d(300, 300), Vec2d(10, 10))
             t.anchor = Vec2d(2, 2)
             t.scale = Vec2d(1*i, i*1)
             self.world.add_component(e, r)
@@ -132,7 +132,7 @@ class Factory(Processor):
         e = self.world.create_entity()
         r = Renderable(self.texture_from_image("joint.png"))
         r.colors = [255, 0, 0, 255] * 4
-        t = Transform(Vec2d(150, 150), 10, 10)
+        t = Transform(Vec2d(150, 150), Vec2d(10, 10))
         t.unzoomable = True
         self.world.add_component(e, r)
         self.world.add_component(e, t)
@@ -248,7 +248,7 @@ class Factory(Processor):
         # render comp
         r = Renderable(self.texture_from_image("joint.png"))
         r.colors = [255, 0, 0, 255] * 4
-        t = Transform(Vec2d(0, 0), 10, 20)
+        t = Transform(Vec2d(0, 0), Vec2d(10, 20))
         t.parent = tr
         t._set_modified()
         self.world.add_component(ent, r)
@@ -278,7 +278,7 @@ class Factory(Processor):
             b_j = Joint(b_ent)
             self.world.add_component(b_ent, b_j)
             # transform
-            self.world.add_component(b_ent, Transform(v1, 5, 5))
+            self.world.add_component(b_ent, Transform(v1, Vec2d(5, 5)))
             # switch circle
             r = Renderable(self.texture_from_image("joint.png"))
             r.colors = [255, 0, 0, 255] * 4
@@ -292,7 +292,7 @@ class Factory(Processor):
             e_ent = self.world.create_entity()
             e_j = Joint(e_ent)
             self.world.add_component(e_ent, e_j)
-            tr2 = Transform(v2, 5, 5)
+            tr2 = Transform(v2, Vec2d(5, 5))
             self.world.add_component(e_ent, tr2)
             r = Renderable(self.texture_from_image("joint.png"))
             r.colors = [255, 0, 0, 255] * 4
@@ -340,9 +340,11 @@ class Factory(Processor):
     """
 
     def create_instance(self, pos):
+        width = 150
+        height = 300
         # main body
         e = self.world.create_entity()
-        T = Transform(pos, 50, 100)  #main bounding sizes
+        T = Transform(pos, Vec2d(width, height))  #main bounding sizes
         T.anchor = Vec2d(0, 0)
         i = Instance()
         r = Renderable()
@@ -356,7 +358,7 @@ class Factory(Processor):
         r = Renderable(atype=GL_LINES)
         r.colors = [255, 0, 0, 255] * 2
         t = Transform(Vec2d(0,0))
-        t._pos[1] = Vec2d(50, 0)
+        t.pos1 = Vec2d(width, 0)
         t.parent = T
         self.world.add_component(e, r)
         self.world.add_component(e, t)
@@ -366,7 +368,7 @@ class Factory(Processor):
         r = Renderable(atype=GL_LINES)
         r.colors = [255, 0, 0, 255] * 2
         t = Transform(Vec2d(0,0))
-        t._pos[1] = Vec2d(0, 100)
+        t.pos1 = Vec2d(0, height)
         t.parent = T
         self.world.add_component(e, r)
         self.world.add_component(e, t)
@@ -375,8 +377,8 @@ class Factory(Processor):
         e = self.world.create_entity()
         r = Renderable(atype=GL_LINES)
         r.colors = [255, 0, 0, 255] * 2
-        t = Transform(Vec2d(50,0))
-        t._pos[1] = Vec2d(50, 100)
+        t = Transform(Vec2d(width,0))
+        t.pos1 = Vec2d(width, height)
         t.parent = T
         self.world.add_component(e, r)
         self.world.add_component(e, t)
@@ -385,8 +387,8 @@ class Factory(Processor):
         e = self.world.create_entity()
         r = Renderable(atype=GL_LINES)
         r.colors = [255, 0, 0, 255] * 2
-        t = Transform(Vec2d(0,100))
-        t._pos[1] = Vec2d(50, 100)
+        t = Transform(Vec2d(0, height))
+        t.pos1 = Vec2d(width, height)
         t.parent = T
         self.world.add_component(e, r)
         self.world.add_component(e, t)
@@ -396,12 +398,27 @@ class Factory(Processor):
         e_ent = self.world.create_entity()
         e_j = Joint(e_ent)
         self.world.add_component(e_ent, e_j)
-        tr2 = Transform(pin_pos, 5, 5)
+        tr2 = Transform(pin_pos, Vec2d(5, 5))
         tr2.parent = T
         self.world.add_component(e_ent, tr2)
         r = Renderable(self.texture_from_image("joint.png"))
         r.colors = [255, 0, 0, 255] * 4
         self.world.add_component(e_ent, r)
+
+        #joint label
+        e = self.world.create_entity()
+        t = Transform(Vec2d(10, 0))
+        t.parent = tr2
+        l = pyglet.text.Label(      #FIXME LOOKS LIKE PROBLEM THERE when zoooom
+            "Kind of pin",          # give a name
+            font_size=8,
+            batch=Renderable.batch, # will be batched by batch.draw()
+            group=Renderable.fg,     # on foreground z place
+            anchor_y="center"
+
+        )
+        self.world.add_component(e, t)
+        self.world.add_component(e, l)
 
     def process(self, dt):         #check died entity by ttl
         #"""

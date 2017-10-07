@@ -25,6 +25,7 @@ class EditorProcessor(Processor):
         self.picked_shift_v = Vec2d(0, 0)
         self.cam_rotating = False
         self.cam_rot_angle = 0
+        self.en_snap = True       #instance items do not need in snapping
 
 
     def on_add(self, proc):
@@ -90,6 +91,7 @@ class EditorProcessor(Processor):
                 if sv:
                     self.picked = [tr]
                     self.picked_shift_v = sv
+                    self.en_snap = False
                     return
 
             # nothing to pick -> find a join
@@ -119,21 +121,22 @@ class EditorProcessor(Processor):
         if self.picked:
             scr_v = Vec2d(x, y)
             w = self.cam.to_world(scr_v)
-            min_dist = 1000000
-            near_tr = None
-            # FIXME: may be need an updatin delay for eficient
-            for ent, (tr, jnt) in self.world.get_components(Transform, Joint):
-                if tr == self.picked[0]:
-                    continue
-                sq_d = w.get_dist_sqrd(tr.g_pos)
-                if sq_d < min_dist:
-                    min_dist = sq_d
-                    near_tr = tr
+            if self.en_snap:
+                min_dist = 1000000
+                near_tr = None
+                # FIXME: may be need an updatin delay for eficient
+                for ent, (tr, jnt) in self.world.get_components(Transform, Joint):
+                    if tr == self.picked[0]:
+                        continue
+                    sq_d = w.get_dist_sqrd(tr.g_pos)
+                    if sq_d < min_dist:
+                        min_dist = sq_d
+                        near_tr = tr
 
-            if near_tr:
-                scr_tr_v = self.cam.to_screen(near_tr.g_pos)
-                if (scr_tr_v - scr_v).get_length_sqrd() < SQ_SNAP_DISTANCE:
-                    w = near_tr.g_pos
+                if near_tr:
+                    scr_tr_v = self.cam.to_screen(near_tr.g_pos)
+                    if (scr_tr_v - scr_v).get_length_sqrd() < SQ_SNAP_DISTANCE:
+                        w = near_tr.g_pos
 
             self.picked[0].x = w.x - self.picked_shift_v.x
             self.picked[0].y = w.y - self.picked_shift_v.y
@@ -166,10 +169,8 @@ class EditorProcessor(Processor):
                         assert (self.picked[i].replace_pt(self.picked[0].pos, tr.pos) == True), "Some problem"
                         self.picked[i]._set_modified()
                     self.world.delete_entity(self.picked_id)
-                    self.picked_jnt = None
-                    self.picked = None
-                    self.picked_id = -1
-                    return
+                    break
+        self.en_snap = True
         self.picked_jnt = None
         self.picked = None
         self.picked_id = -1
