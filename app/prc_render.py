@@ -45,14 +45,12 @@ class TextureRenderProcessor(Processor):
 
             if tr.modified(self.cam.zoom):
                 if rend.atype == GL_POINTS:
-                    rend.vertex_list.vertices[:] = [tr.x, tr.y]
+                    rend.vertex_list.vertices[:] = [tr.g_pos.x, tr.g_pos.y]
+                    tr.redrawed()
                 elif rend.atype == GL_LINES:
-                    rend.vertex_list.vertices[:] = [
-                        tr.x,
-                        tr.y,
-                        tr.x1,
-                        tr.y1
-                    ]
+                    v1 = tr.g_pos
+                    v2 = tr.g_pos1
+                    rend.vertex_list.vertices[:] = [v1.x, v1.y, v2.x, v2.y]
                     # make tratsform unmodified
                     tr.redrawed()
                 else:

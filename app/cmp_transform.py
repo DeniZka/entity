@@ -59,7 +59,8 @@ class Transform(Component):
         """
         self._modified = True
         for c in self._childs:
-            c._modified = True
+            c._set_modified()
+
 
     def redrawed(self):
         """
@@ -123,6 +124,34 @@ class Transform(Component):
             return self.parent.g_pos + self._pos[0]
         else:
             return self._pos[0]
+
+    @property
+    def pos1(self):
+        """
+        :return: local position
+        """
+        return self._pos[1]
+
+    @pos1.setter
+    def pos1(self, val):
+        """
+        Sets a local position
+        :param val:
+        :return:
+        """
+        if val != self._pos[1]:
+            self._pos[1] = val
+            self._set_modified()
+
+    @property
+    def g_pos1(self):
+        """
+        :return: global position calculated from the parents
+        """
+        if self.parent:
+            return self.parent.g_pos + self._pos[1]
+        else:
+            return self._pos[1]
 
     @property
     def angle(self):
@@ -279,7 +308,7 @@ class Transform(Component):
     def get_in_bb(self, pos):
         if self._bb[0].x < pos.x < self._bb[1].x and \
            self._bb[0].y < pos.y < self._bb[1].y:
-            return pos - self._pos[0]
+            return pos + self._pos[0]
         else:
             return None
 
@@ -291,22 +320,22 @@ class Transform(Component):
         self._v[0] = Vec2d(-self._anchor.x * self._scale.x,
                            -self._anchor.y * self._scale.y)
         self._v[0].rotate(self._angle)
-        self._v[0] = self._v[0] + self._pos[0] + self._ppos
+        self._v[0] = self._v[0] + self._ppos
 
         self._v[1] = Vec2d((self._w - self._anchor.x) * self._scale.x,
                            -self._anchor.y * self._scale.y)
         self._v[1].rotate(self._angle)
-        self._v[1] = self._v[1] + self._pos[0] + self._ppos
+        self._v[1] = self._v[1] + self._ppos
 
         self._v[2] = Vec2d((self._w - self._anchor.x) * self._scale.x,
                            (self._h - self._anchor.y) * self._scale.y)
         self._v[2].rotate(self._angle)
-        self._v[2] = self._v[2] + self._pos[0] + self._ppos
+        self._v[2] = self._v[2] + self._ppos
 
         self._v[3] = Vec2d(-self._anchor.x * self._scale.x,
                            (self._h - self._anchor.y) * self._scale.y)
         self._v[3].rotate(self._angle)
-        self._v[3] = self._v[3] + self._pos[0] + self._ppos
+        self._v[3] = self._v[3] + self._ppos
 
     def update_vertix_uz(self, zoom):  # FIXME: unzoomable sprites does not show at begin
         if self.parent:
@@ -315,22 +344,22 @@ class Transform(Component):
         self._v[0] = Vec2d(-self._anchor.x / self.last_cam_zoom,
                            -self._anchor.y / self.last_cam_zoom)
         self._v[0].rotate(self._angle)
-        self._v[0] = self._v[0] + self._pos[0] + self._ppos
+        self._v[0] = self._v[0] + self._ppos
 
         self._v[1] = Vec2d((self._w - self._anchor.x) / self.last_cam_zoom,
                            -self._anchor.y / self.last_cam_zoom)
         self._v[1].rotate(self._angle)
-        self._v[1] = self._v[1] + self._pos[0] + self._ppos
+        self._v[1] = self._v[1] + self._ppos
 
         self._v[2] = Vec2d((self._w - self._anchor.x) / self.last_cam_zoom,
                            (self._h - self._anchor.y) / self.last_cam_zoom)
         self._v[2].rotate(self._angle)
-        self._v[2] = self._v[2] + self._pos[0] + self._ppos
+        self._v[2] = self._v[2] + self._ppos
 
         self._v[3] = Vec2d(-self._anchor.x / self.last_cam_zoom,
                            (self._h - self._anchor.y) / self.last_cam_zoom)
         self._v[3].rotate(self._angle)
-        self._v[3] = self._v[3] + self._pos[0] + self._ppos
+        self._v[3] = self._v[3] + self._ppos
 
     def vertixes(self, zoom=None):
         if self.unzoomable:
@@ -345,9 +374,9 @@ class Transform(Component):
         self.calc_bb()
 
         return [
-            self._v[0].x, self._v[0].y,
-            self._v[1].x, self._v[1].y,
-            self._v[2].x, self._v[2].y,
-            self._v[3].x, self._v[3].y
+            self._v[0].x + self._pos[0].x, self._v[0].y + self._pos[0].y,
+            self._v[1].x + self._pos[0].x, self._v[1].y + self._pos[0].y,
+            self._v[2].x + self._pos[0].x, self._v[2].y + self._pos[0].y,
+            self._v[3].x + self._pos[0].x, self._v[3].y + self._pos[0].y
         ]
 
