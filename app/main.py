@@ -71,7 +71,3 @@ def run(args=None):
     pyglet.clock.schedule_interval(update, 1.0 / (WindowHandler.FPS*2))
     pyglet.app.run()
 
-
-
-#if __name__ == "__main__":
-

@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import sys
 
-# from src import main
 from app import main
 
 if __name__ == '__main__':
