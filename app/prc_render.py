@@ -20,6 +20,7 @@ class TextureRenderProcessor(Processor):
         Renderable.mg = RendOrderGroup(1)
         Renderable.fg = RendOrderGroup(2)
         Renderable.ui = RendOrderGroup(3)
+        Renderable.fat_line = FatLineOrderGroup(4)
 
         self.cam = None
 
@@ -103,3 +104,13 @@ class RendOrderGroup(OrderedGroup):
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
+
+class FatLineOrderGroup(OrderedGroup):
+    def __init__(self, order, parent=None):
+        super().__init__(order, parent)
+
+    def set_state(self):
+        glLineWidth(4)
+
+    def unset_state(self):
+        glLineWidth(1)

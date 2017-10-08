@@ -394,15 +394,19 @@ class Factory(Processor):
         self.world.add_component(e, t)
 
         #a pin joint
-        pin_pos = Vec2d(0, 13)
+        pin_pos = Vec2d(-10, 13)
         e_ent = self.world.create_entity()
         e_j = Joint(e_ent)
         self.world.add_component(e_ent, e_j)
-        tr2 = Transform(pin_pos, Vec2d(5, 5))
+        tr2 = Transform(pin_pos, Vec2d(10, 0))
         tr2.parent = T
         self.world.add_component(e_ent, tr2)
-        r = Renderable(self.texture_from_image("joint.png"))
-        r.colors = [255, 0, 0, 255] * 4
+        #r = Renderable(self.texture_from_image("joint.png"))
+        r = Renderable(
+            group=Renderable.fat_line,
+            atype=GL_LINES
+        )
+        r.colors = [0, 255, 0, 255] * 2
         self.world.add_component(e_ent, r)
 
         #joint label

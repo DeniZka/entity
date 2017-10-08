@@ -5,13 +5,18 @@ from app.cmp import Component
 
 
 class Renderable(Component):
-    batch = None  # easy access to batch group from everywhere
+    # pack of vertixes
+    # easy access to batch group from everywhere
+    batch = None
     ui_batch = None
+
+    # groups
     bg = None
     mg = None
     fg = None
     ui = None
     bg_image = None
+    fat_line = None
 
     def __init__(self, texture=None, group=None, atype=GL_QUADS):
         self.texture = texture
@@ -22,6 +27,8 @@ class Renderable(Component):
             parent = group
         if texture:
             self.group = TextureBindGroup(texture, parent)
+        elif group:
+            self.group = group
         else:
             self.group = Renderable.mg
         self.vertex_list = None

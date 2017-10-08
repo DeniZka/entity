@@ -22,7 +22,7 @@ class Transform(Component):
         self._parent = None  # relative posititoning
         self._ppos = Vec2d(0, 0)  # parent positioning
         self._childs = []
-        self._pos = [
+        self._pos = [       # local pos
             Vec2d(0, 0),    # for sprite anchor
             Vec2d(0, 0),    # for line
             Vec2d(0, 0),    # for futurer modifible quad
@@ -36,8 +36,12 @@ class Transform(Component):
         ]
         self._anchor = Vec2d(0.0, 0.0)
         self._size = size
-        if size.x > 0 or size.y > 0:
-            self._anchor = size / 2
+        self._pos[1] = pos + size
+        if anchor:
+            self._anchor = anchor
+        elif size.x > 0 or size.y > 0:
+            self._anchor = size * 0.5
+
 
         if pos:
             self._pos[0] = pos
