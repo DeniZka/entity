@@ -78,8 +78,29 @@ class EditorProcessor(Processor):
             ret.append(sg_tr)
         return ret
 
+    def nearest_joint(self, pos):
+        min_dist = 1000000
+        near_tr = None
+        near_jnt = None
+        # TODO FIXME: may be need an updatin delay for eficient
+        for ent, (tr, jnt) in self.world.get_components(Transform, Joint):
+            # except calc if tr is picked
+            if self.picked and tr == self.picked[0]:
+                continue
+            # except unpickable child node
+            if self.picked is None and tr.parent:
+                continue
+            sq_d = pos.get_dist_sqrd(tr.g_pos)
+            if sq_d < min_dist:
+                min_dist = sq_d
+                near_tr = tr
+                near_jnt = jnt
+
+        return near_tr, near_jnt
+
     def on_mouse_press(self, x, y, button, modifiers):
         if button == 1:
+            scr_v = Vec2d(x, y)
             w = self.cam.to_world(Vec2d(x, y))
             # find an pickable instance
             for ent, (tr, inst, r) in self.world.get_components(Transform, Instance, Renderable):
@@ -96,14 +117,14 @@ class EditorProcessor(Processor):
 
             # nothing to pick -> find a join
             found = False
-            for ent, (tr, jnt) in self.world.get_components(Transform, Joint):
-                if self.contact_dist(tr.pos, w):
-                    self.picked_jnt = jnt
-                    self.picked_id = ent
-                    self.picked = self.get_seg_tr(tr, jnt)
-                    if self.picked:
-                        found = True
-                        break
+            near = self.nearest_joint(w)
+            if near[0]:
+                scr_tr_v = self.cam.to_screen(near[0].g_pos)
+                if (scr_tr_v - scr_v).get_length_sqrd() < SQ_SNAP_DISTANCE:
+                    self.picked_jnt = near[1]
+                    self.picked_id = near[1].id
+                    self.picked = self.get_seg_tr(near[0], near[1])
+                    found = True
 
             if not found:
                 # no joint -> create segment and pick it
@@ -122,21 +143,12 @@ class EditorProcessor(Processor):
             scr_v = Vec2d(x, y)
             w = self.cam.to_world(scr_v)
             if self.en_snap:
-                min_dist = 1000000
-                near_tr = None
-                # FIXME: may be need an updatin delay for eficient
-                for ent, (tr, jnt) in self.world.get_components(Transform, Joint):
-                    if tr == self.picked[0]:
-                        continue
-                    sq_d = w.get_dist_sqrd(tr.g_pos)
-                    if sq_d < min_dist:
-                        min_dist = sq_d
-                        near_tr = tr
+                near = self.nearest_joint(w)
 
-                if near_tr:
-                    scr_tr_v = self.cam.to_screen(near_tr.g_pos)
+                if near[0]:
+                    scr_tr_v = self.cam.to_screen(near[0].g_pos)
                     if (scr_tr_v - scr_v).get_length_sqrd() < SQ_SNAP_DISTANCE:
-                        w = near_tr.g_pos
+                        w = near[0].g_pos
 
             self.picked[0].x = w.x - self.picked_shift_v.x
             self.picked[0].y = w.y - self.picked_shift_v.y
