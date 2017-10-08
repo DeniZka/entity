@@ -17,6 +17,7 @@ class Renderable(Component):
     ui = None
     bg_image = None
     fat_line = None
+    fat_point = None
 
     def __init__(self, texture=None, group=None, atype=GL_QUADS):
         self.texture = texture

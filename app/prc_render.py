@@ -21,6 +21,7 @@ class TextureRenderProcessor(Processor):
         Renderable.fg = RendOrderGroup(2)
         Renderable.ui = RendOrderGroup(3)
         Renderable.fat_line = FatLineOrderGroup(4)
+        Renderable.fat_point = FatPointOrderGroup(5)
 
         self.cam = None
 
@@ -98,7 +99,6 @@ class RendOrderGroup(OrderedGroup):
         super().__init__(order, parent)
 
     def set_state(self):
-        #glLineWidth(3)
         return
         #this added grlobaly
         glEnable(GL_BLEND)
@@ -114,3 +114,14 @@ class FatLineOrderGroup(OrderedGroup):
 
     def unset_state(self):
         glLineWidth(1)
+
+
+class FatPointOrderGroup(OrderedGroup):
+    def __init__(self, order, parent=None):
+        super().__init__(order, parent)
+
+    def set_state(self):
+        glPointSize(4)
+
+    def unset_state(self):
+        glPointSize(1)

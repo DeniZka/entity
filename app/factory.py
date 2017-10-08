@@ -28,15 +28,15 @@ class Factory(Processor):
     def joint_mod_colors(self, rend):
         #became two way
         if rend.colors[0] == 255:
-            rend.colors = [0, 255, 0, 255] * 4
+            rend.colors = [0, 255, 0, 255]
             return
         #became threeway
         if rend.colors[1] == 255:
-            rend.colors = [0, 0, 255, 255] * 4
+            rend.colors = [0, 0, 255, 255]
             return
         #became four way
         if rend.colors[2] == 255:
-            rend.colors = [254, 0, 255, 255] * 4
+            rend.colors = [254, 0, 255, 255]
             return
 
     def createEnv(self):
@@ -276,12 +276,17 @@ class Factory(Processor):
         if b_j == None:
             b_ent = self.world.create_entity()
             b_j = Joint(b_ent)
-            self.world.add_component(b_ent, b_j)
             # transform
             self.world.add_component(b_ent, Transform(v1, Vec2d(5, 5)))
             # switch circle
-            r = Renderable(self.texture_from_image("joint.png"))
-            r.colors = [255, 0, 0, 255] * 4
+            #r = Renderable(self.texture_from_image("joint.png"))
+            #r.colors = [255, 0, 0, 255] * 4
+            r = Renderable(
+                group=Renderable.fat_point,
+                atype=GL_POINTS
+            )
+            r.colors = [255, 70, 70, 255]
+            self.world.add_component(b_ent, b_j)
             self.world.add_component(b_ent, r)
 
         tr2 = None #will return last added for editor
@@ -291,11 +296,16 @@ class Factory(Processor):
         if e_j == None:
             e_ent = self.world.create_entity()
             e_j = Joint(e_ent)
-            self.world.add_component(e_ent, e_j)
             tr2 = Transform(v2, Vec2d(5, 5))
+            #r = Renderable(self.texture_from_image("joint.png"))
+            #r.colors = [255, 0, 0, 255] * 4
+            r = Renderable(
+                group=Renderable.fat_point,
+                atype=GL_POINTS
+            )
+            r.colors = [255, 70, 70, 255]
             self.world.add_component(e_ent, tr2)
-            r = Renderable(self.texture_from_image("joint.png"))
-            r.colors = [255, 0, 0, 255] * 4
+            self.world.add_component(e_ent, e_j)
             self.world.add_component(e_ent, r)
 
 
