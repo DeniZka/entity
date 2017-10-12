@@ -15,7 +15,8 @@ class WindowHandler(pyglet.window.Window):
 
     def __init__(self,  debug_draw=True):
         super().__init__(width=WindowHandler.res[0], height=WindowHandler.res[1],
-                         resizable=True)
+                         resizable=True,
+                         vsync=False)
         self.win_subs = {}
         self.sub_id = 0 #subscribers identifier
         BGCOLOR = (0.2, 0.2, 0.2, 1.0)
@@ -95,3 +96,4 @@ class WindowHandler(pyglet.window.Window):
         self.clear()
         for sub in self.win_subs["on_draw"]:
             sub[1]()
+        #self.flip()

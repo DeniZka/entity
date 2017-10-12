@@ -35,14 +35,14 @@ class Renderable(Component):
         self.vertex_list = []
         self._modified = True  # support for smooth coloring in dt
 
-        vertex_format = 'v2f/stream'
+        vertex_format = 'v2f/static'
         if texture:
             if self.group.parent == Renderable.ui:
                 self.vertex_list.append(
                     Renderable.ui_batch.add(
                     4, atype,
                     self.group,
-                    vertex_format, 'c4B/stream',
+                    vertex_format, 'c4B/static',
                     ('t3f/static', texture.tex_coords)
                     )
                 )
@@ -51,7 +51,7 @@ class Renderable(Component):
                     Renderable.batch.add(
                     4, atype,
                     self.group,
-                    vertex_format, 'c4B/stream',
+                    vertex_format, 'c4B/static',
                     ('t3f/static', texture.tex_coords)
                     )
                 )
@@ -61,7 +61,7 @@ class Renderable(Component):
                     Renderable.batch.add(
                     4, atype,
                     self.group,
-                    vertex_format, 'c4B/stream'
+                    vertex_format, 'c4B/static'
                     )
                 )
             elif atype == GL_LINES:
@@ -94,15 +94,36 @@ class Renderable(Component):
         self.vertex_list[0].vertices = verts
 
     def add_line(self, v):
+        """
+        single verticse list is NOT better then multiple lists  !!!
+
+        size = self.vertex_list[0].get_size()
+        self.vertex_list[0].resize(size+2)
+        self.vertex_list[0].vertices[size*2:] = v
+        #self.vertex_list[0].colors[size*2:] =
+        for i in range(2):
+            for j in range(4):
+                self._colors.append(self._colors[j])
+        return
+        """
         self.vertex_list.append(
             Renderable.batch.add(
                 2, GL_LINES,
                 self.group,
-                'v2f/stream', 'c4B/static'
+                'v2f/static', 'c4B/static'
             )
         )
         self.vertex_list[-1].vertices = v
 
+    def add_quads(self, v):
+        self.vertex_list.append(
+            Renderable.batch.add(
+                4, GL_QUADS,
+                self.group,
+                'v2f/static', 'c4B/static'
+            )
+        )
+        self.vertex_list[-1].vertices = v
 
 
     @property
@@ -110,10 +131,9 @@ class Renderable(Component):
         self._modified = False
         return self._colors
 
-
     @colors.setter
     def colors(self, val):
-        self._colors = val
+        self._colors = val * self.vertex_list[0].get_size()
         self._modified = True
 
     @property

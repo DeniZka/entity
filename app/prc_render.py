@@ -1,3 +1,5 @@
+import time
+
 from pyglet.gl import *
 from pyglet.graphics import OrderedGroup
 from pymunk.pyglet_util import DrawOptions
@@ -56,13 +58,17 @@ class TextureRenderProcessor(Processor):
         for e, (tr, rend) in self.world.get_components(Transform, Renderable):
             if rend.modified:
                 for vl in rend.vertex_list:
-                    vl.colors[:] = rend.colors
+                    try:
+                        vl.colors[:] = rend.colors
+                    except:
+                        print ("Entity rendering problem:", e)
+                        exit()
 
-            if tr.modified(self.cam.zoom):
-                for vl in rend.vertex_list:
-                    if rend.atype == GL_POINTS:
-                        vl.vertices[:] = [tr.g_pos.x, tr.g_pos.y]
-                        tr.redrawed()
+            #if tr.modified(self.cam.zoom):
+                #for vl in rend.vertex_list:
+                #    if rend.atype == GL_POINTS:
+                #        vl.vertices[:] = [tr.g_pos.x, tr.g_pos.y]
+                #        tr.redrawed()
                 #elif rend.atype == GL_LINES:
                 #    v1 = tr.g_pos
                 #    v2 = tr.g_pos1
@@ -96,7 +102,10 @@ class TextureRenderProcessor(Processor):
             #TODO: blit HIDING mask on Car texture so if it on hiden segment
             Renderable.bg_image.texture.blit(0, 0)
 
+        #t1 = time.time()
         Renderable.batch.draw()
+        #t2 = time.time()
+        #print (1/(t2-t1))
 
         self.cam.restore_transform()
 

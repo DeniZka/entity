@@ -21,6 +21,7 @@ class UIProcessor(Processor):
         self.screen = None
         self.w_width = 800
         self.w_height = 600
+        self.com_t = Vec2d(0, 0)
         return
 
     def on_add(self, proc):
@@ -41,6 +42,7 @@ class UIProcessor(Processor):
 
 
     def on_mouse_motion(self, x, y, dx, dy):
+        return
         self.win_coord.text = "Actual\tX:" + str(x) + "\tY:" + str(y)
         v = self.cam.to_world(Vec2d(x, y))
         self.scene_coord.text = "World\tX:" + str(int(v.x)) + "\tY:" + str(int(v.y))
@@ -49,6 +51,7 @@ class UIProcessor(Processor):
         return
 
     def on_win_resize(self, width, height):
+        return
         self.com_t.x = width - 64
         self.com_t.y = height - 64
         self.com_t._set_modified()
@@ -69,9 +72,11 @@ class UIProcessor(Processor):
                   WindowHandler.res[1] - 64)
         compass = self.world.create_entity()
         tex = pyglet.resource.image("compass.png").get_texture(True)
-        rend = Renderable(tex, group=Renderable.ui)
-        rend.colors = [255, 255, 255, 150] * 4
-        t = Transform(v, rend.size)
+        t = Transform(v, Vec2d(tex.width, tex.height))
+
+        rend = Renderable(tex, group=Renderable.ui, verts=t.q_verts())
+        rend.colors = [255, 255, 255, 150]
+
         self.world.add_component(compass, t)
         self.world.add_component(compass, rend)
         self.com_t = t

@@ -45,11 +45,9 @@ class Factory(Processor):
         t = Transform(Vec2d(0, -20), Vec2d(7200, 20))
         t.angle = 0
         base = Renderable(group=t, verts=t.q_verts())
-        base.colors = [0, 200, 0, 255] * 4
+        base.colors = [0, 200, 0, 255]
         self.world.add_component(self.environment, base)
         self.world.add_component(self.environment, t)
-
-        return
 
         lines = [
             pymunk.Segment(Physics.space.static_body, Vec2d(0, 0), Vec2d(7200, 0), 10),
@@ -254,11 +252,13 @@ class Factory(Processor):
         im = pyglet.resource.image("joint.png")
         tex = im.get_texture()
 
-        r = Renderable(tex)
-        r.colors = [255, 0, 0, 255] * 4
         t = Transform(Vec2d(0, 0), Vec2d(10, 20))
+        t.anchor = Vec2d(5, 10)
         t.parent = tr
-        t._set_modified()
+        t.angle = 10
+        #t._set_modified()
+        r = Renderable(tex,group=t, verts=t.q_verts())
+        r.colors = [255, 0, 0, 255]
         self.world.add_component(ent, r)
         self.world.add_component(ent, t)
 
@@ -286,11 +286,12 @@ class Factory(Processor):
             b_j = Joint(b_ent)
             # transform
             t = Transform(v1, Vec2d(5, 5))
+            t.parent = Renderable.fat_point
             self.world.add_component(b_ent, t)
-            fat_point = FatPointGroup(t)
             r = Renderable(
-                group=fat_point,
-                atype=GL_POINTS
+                group=t,
+                atype=GL_POINTS,
+                verts=[0,0]
             )
             r.colors = [255, 70, 70, 255]
             self.world.add_component(b_ent, b_j)
@@ -304,16 +305,16 @@ class Factory(Processor):
             e_ent = self.world.create_entity()
             e_j = Joint(e_ent)
             tr2 = Transform(v2, Vec2d(5, 5))
-            fat_point = FatPointGroup(tr2)
+            tr2.parent = Renderable.fat_point
             r = Renderable(
-                group=fat_point,
-                atype=GL_POINTS
+                group=tr2,
+                atype=GL_POINTS,
+                verts=[0, 0]
             )
             r.colors = [255, 70, 70, 255]
             self.world.add_component(e_ent, tr2)
             self.world.add_component(e_ent, e_j)
             self.world.add_component(e_ent, r)
-
 
         s = Segment(ent, b_j.id, e_j.id, tag)
         self.world.add_component(ent, s)
@@ -322,7 +323,6 @@ class Factory(Processor):
         b_j.attach(ent)
         e_j.attach(ent)
 
-
         # create segment line
         tr = Transform(v1)
         tr._pos[0] = v1
@@ -330,15 +330,15 @@ class Factory(Processor):
         self.world.add_component(ent, tr)
         br = Renderable(atype=GL_LINES, group=tr, verts=tr.l_verts())
         if tag == "TrackSegment":
-            br.colors = [000, 200, 0, 255] * 2
+            br.colors = [000, 200, 0, 255]
         elif tag == "HiddenSegment":
-            br.colors = [100, 100, 100, 255] * 2
+            br.colors = [100, 100, 100, 255]
         elif tag == "Crossing":
-            br.colors = [200, 0, 0, 255] * 2
+            br.colors = [200, 0, 0, 255]
         elif tag == "LUSegment":
-            br.colors = [200, 100, 0, 255] * 2
+            br.colors = [200, 100, 0, 255]
         elif tag == "EESegment":
-            br.colors = [200, 0, 200, 255] * 2
+            br.colors = [200, 0, 200, 255]
         self.world.add_component(ent, br)
         return (e_ent, e_j, [tr2, tr])
 
@@ -361,11 +361,13 @@ class Factory(Processor):
         # main body
         e = self.world.create_entity()
         i = Instance()
-        T = Transform(Vec2d(0,200), Vec2d(width, height))  #main bounding sizes
+        T = Transform(pos, Vec2d(width, height))  #main bounding sizes
         T._anchor = Vec2d(0, 0)
         T.angle = 0
         r = Renderable(group=T, verts=T.q_verts())
-        r.colors = [0, 0, 255, 100] * 4
+        r.colors = [0, 0, 255, 100]
+        for i in range(0, 1000):
+            r.add_quads([0+i*2, 0, width+i*2, 0, width+i*2, height+i, 0+i*3, height-3  ])
         self.world.add_component(e, i)
         self.world.add_component(e, r)
         self.world.add_component(e, T)
@@ -377,10 +379,12 @@ class Factory(Processor):
         t.pos1 = Vec2d(width, 0)
         t.parent = T
         r = Renderable(group=t, atype=GL_LINES, verts=t.l_verts())
-        r.colors = [255, 0, 0, 255] * 2
+        r.colors = [255, 0, 0, 255]
         r.add_line([0,0,0,height])
         r.add_line([width,0,width,height])
         r.add_line([0,height,width,height])
+        for i in range(0, 1000):
+            r.add_line([width+i*2, 0, width+i*2, height ])
         self.world.add_component(e, r)
         self.world.add_component(e, t)
 
@@ -396,10 +400,11 @@ class Factory(Processor):
         r = Renderable(
             #group=Renderable.fat_line,  #todo subgroup
             group=fat_line_g,
+            #group=tr2,
             atype=GL_LINES,
             verts=tr2.l_verts()
         )
-        r.colors = [0, 255, 0, 255] * 2
+        r.colors = [0, 255, 0, 255]
         self.world.add_component(e_ent, r)
 
         #joint label
@@ -412,7 +417,6 @@ class Factory(Processor):
             batch=Renderable.batch, # will be batched by batch.draw()
             group=t,
             anchor_y="center"
-
         )
         self.world.add_component(e, t)
         self.world.add_component(e, l)

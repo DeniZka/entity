@@ -135,7 +135,7 @@ class Transform(Group):
         """
         :return: global position calculated from the parents
         """
-        if self.parent:
+        if self.parent and self.parent is Transform:
             return self.parent.g_pos + self._pos[0]
         else:
             return self._pos[0]
@@ -163,14 +163,14 @@ class Transform(Group):
         """
         :return: global position calculated from the parents
         """
-        if self._parent:
+        if self._parent and self.parent is Transform:
             return self._parent.g_pos + self._pos[1]
         else:
             return self._pos[1]
 
     @property
     def angle(self):
-        if self._parent:
+        if self._parent and self.parent is Transform:
             return self._parent.angle + self._angle
         else:
             return self._angle
@@ -193,7 +193,7 @@ class Transform(Group):
 
     @property
     def x(self):
-        if self._parent:
+        if self._parent and self.parent is Transform:
             return self._parent.x + self._pos[0].x
         else:
             return self._pos[0].x
@@ -211,7 +211,7 @@ class Transform(Group):
 
     @property
     def y(self):
-        if self._parent:
+        if self._parent and self.parent is Transform:
             return self._parent.y + self._pos[0].y
         else:
             return self._pos[0].y
@@ -230,7 +230,7 @@ class Transform(Group):
 
     @property
     def x1(self):
-        if self._parent:
+        if self._parent and self.parent is Transform:
             return self._parent.x + self._pos[1].x
         else:
             return self._pos[1].x
@@ -248,7 +248,7 @@ class Transform(Group):
 
     @property
     def y1(self):
-        if self._parent:
+        if self._parent and self.parent is Transform:
             return self._parent.y + self._pos[1].y
         else:
             return self._pos[1].y

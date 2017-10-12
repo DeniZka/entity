@@ -13,17 +13,22 @@ from app.factory import Factory
 from app.hnd_window import WindowHandler
 from app.prc_physics import PhysicsProcessor
 
+from random import randint
+
+pyglet.options['debug_gl'] = False
+
 
 def run(args=None):
     # pyglet graphics batch for efficient rendering
     # Initialize the main window stuff
     win_handler = WindowHandler()
 
+
     phys_processor = PhysicsProcessor()
 
     # Initialize Esper world, and create a "player" Entity with a few Components.
     #world = esper.World()
-    world = Ecs()
+    world = Ecs(True)
     world.win_hnd = win_handler
 
 
@@ -56,18 +61,20 @@ def run(args=None):
 
     #factory was added to processor so we can add come things into
     #factory.testing()
-    factory.createEnv()
-    factory.create_instance(Vec2d(200, 300))
+    #factory.createEnv()
+    for i in range(100):
+        factory.create_instance(Vec2d(randint(0,10000), randint(0, 10000)))
+        #factory.create_instance(Vec2d(0, 0))
     #player = factory.createPlayer(Vec2d(100,100))
     #camera.target = player[1]
     #enemy = factory.createEnemy(Vec2d(100,250))
 
-    ui_processor.load_ui() #last, cause of ui attaches to player and so on
+    #ui_processor.load_ui() #last, cause of ui attaches to player and so on
 
 
     def update(dt):
         world.process(dt)
 
-    pyglet.clock.schedule_interval(update, 1.0 / (WindowHandler.FPS*2))
+    pyglet.clock.schedule_interval(update, 1.0 / (WindowHandler.FPS*5))
     pyglet.app.run()
 
