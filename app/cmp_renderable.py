@@ -19,7 +19,7 @@ class Renderable(Component):
     fat_line = None
     fat_point = None
 
-    def __init__(self, texture=None, group=None, atype=GL_QUADS):
+    def __init__(self, texture=None, group=None, atype=GL_QUADS, verts=[]):
         self.texture = texture
         self.vertex_list = None
         self.atype = atype
@@ -32,48 +32,78 @@ class Renderable(Component):
             self.group = group
         else:
             self.group = Renderable.mg
-        self.vertex_list = None
-        self._colors = [255, 255, 255, 255] * 4
-        self.sub_colors = self._colors
+        self.vertex_list = []
         self._modified = True  # support for smooth coloring in dt
 
         vertex_format = 'v2f/stream'
         if texture:
             if self.group.parent == Renderable.ui:
-                self.vertex_list = Renderable.ui_batch.add(
+                self.vertex_list.append(
+                    Renderable.ui_batch.add(
                     4, atype,
                     self.group,
                     vertex_format, 'c4B/stream',
                     ('t3f/static', texture.tex_coords)
+                    )
                 )
             else:
-                self.vertex_list = Renderable.batch.add(
+                self.vertex_list.append(
+                    Renderable.batch.add(
                     4, atype,
                     self.group,
                     vertex_format, 'c4B/stream',
                     ('t3f/static', texture.tex_coords)
+                    )
                 )
         else:  # textureless
             if atype == GL_QUADS:
-                self.vertex_list = Renderable.batch.add(
+                self.vertex_list.append (
+                    Renderable.batch.add(
                     4, atype,
                     self.group,
                     vertex_format, 'c4B/stream'
+                    )
                 )
             elif atype == GL_LINES:
-                self.vertex_list = Renderable.batch.add(
+                self.vertex_list.append(
+                    Renderable.batch.add(
                     2, atype,
                     self.group,
                     vertex_format, 'c4B/static'
+                    )
                 )
             elif atype == GL_POINTS:
-                self.vertex_list = Renderable.batch.add(
+                self.vertex_list.append(
+                    Renderable.batch.add(
                     1, atype,
                     self.group,
                     vertex_format, 'c4B/static'
+                    )
                 )
             else:
                 assert (False), "WRONG atype"
+
+        # set default colors
+        self._colors = [255, 255, 255, 255] * self.vertex_list[0].count
+        self.sub_colors = self._colors
+
+        #set default vertex
+        if len(verts) < 1:
+            return
+
+        self.vertex_list[0].vertices = verts
+
+    def add_line(self, v):
+        self.vertex_list.append(
+            Renderable.batch.add(
+                2, GL_LINES,
+                self.group,
+                'v2f/stream', 'c4B/static'
+            )
+        )
+        self.vertex_list[-1].vertices = v
+
+
 
     @property
     def colors(self):

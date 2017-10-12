@@ -143,6 +143,7 @@ class EditorProcessor(Processor):
             scr_v = Vec2d(x, y)
             w = self.cam.to_world(scr_v)
             if self.en_snap:
+                #on move snap feature
                 near = self.nearest_joint(w)
 
                 if near[0]:

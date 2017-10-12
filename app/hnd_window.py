@@ -51,7 +51,7 @@ class WindowHandler(pyglet.window.Window):
 
 
     def on_resize(self, width, height):
-        super().on_resize(width, height)
+        #super().on_resize(width, height)
         self.res = (width, height)
         for sub in self.win_subs["on_resize"]:
             sub[1](width, height)

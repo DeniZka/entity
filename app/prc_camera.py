@@ -7,15 +7,14 @@ from app.prc import Processor
 
 
 class CameraProcessor(Processor):
-    
     hres = Vec2d(800, 600)
 
-    def __init__(self, resolution, pos=Vec2d(100,100), target=None):
+    def __init__(self, resolution, pos=Vec2d(0, 0), target=None):
         self.pos = Vec2d(0, 0)
         self.target = None
         self.use_target_angle = False
-        self.angle = 0
-
+        self._angle = 0
+        self._dangle = 0
         self.zoom = 1
 
         self.pos = pos
@@ -23,13 +22,21 @@ class CameraProcessor(Processor):
         CameraProcessor.hres = resolution / 2
         self.process(0)
 
+    @property
+    def angle(self):
+        return self._angle
+
+    @angle.setter
+    def angle(self, val):
+        self._angle = val
+        self._dangle = math.degrees(val)
 
     def process(self, dt):
         if self.target:
             self.pos = self.target.position
             if self.use_target_angle:
-                self.angle = self.target.angle
-        #TODO: cam can moove when target speed up
+                self._angle = self.target.angle
+                # TODO: cam can moove when target speed up
 
     def on_add(self, proc):
         if proc == self and self.world.win_hnd:
@@ -40,16 +47,17 @@ class CameraProcessor(Processor):
             self.world.win_hnd.unsubscribe("on_resize", self.sub_id)
 
     def on_win_resize(self, width, height):
-        CameraProcessor.hres = Vec2d(width/2, height/2)
+        CameraProcessor.hres = Vec2d(width / 2, height / 2)
+        glViewport(0, 0, width, height)
 
     def resize(self, resolition):
-        CameraProcessor.hres = resolition/2
+        CameraProcessor.hres = resolition / 2
 
     def set_target(self, body):
         self.target = body
         self.pos = self.target.position
         if self.use_target_angle:
-            self.angle = self.target.angle
+            self._angle = self.target.angle
 
     def to_world(self, screen):
         """
@@ -58,7 +66,7 @@ class CameraProcessor(Processor):
         :return: Vec2d of world
         """
         sub_v = (screen - CameraProcessor.hres) / self.zoom
-        sub_v.rotate(self.angle)
+        sub_v.rotate(self._angle)
         v = self.pos + sub_v
         return v
 
@@ -69,7 +77,7 @@ class CameraProcessor(Processor):
         :return:
         """
         sub_v = world - self.pos
-        sub_v.rotate(-self.angle)
+        sub_v.rotate(-self._angle)
         sub_v = sub_v * self.zoom + CameraProcessor.hres
         return sub_v
 
@@ -77,7 +85,7 @@ class CameraProcessor(Processor):
         if self.target:
             return
         sv = dv / self.zoom
-        sv.rotate(self.angle)
+        sv.rotate(self._angle)
         self.pos -= sv
 
     def shift_to_mouse(self, screen, z_mul):
@@ -101,20 +109,28 @@ class CameraProcessor(Processor):
         self.target = body
 
     def apply_transform(self):
-        #glMatrixMode(GL_MODELVIEW)
-        #glLoadIdentity()
         glPushMatrix()
+        glMatrixMode(gl.GL_PROJECTION)
+        glLoadIdentity()
+        glOrtho(- self.hres[0] / self.zoom,
+                + self.hres[0] / self.zoom,
+                - self.hres[1] / self.zoom,
+                + self.hres[1] / self.zoom,
+                -1, 1)
 
-        glTranslatef(CameraProcessor.hres[0], CameraProcessor.hres[1], 0) #move to 0 to rotate correctly
-
-        glScalef(self.zoom, self.zoom, 1)
-
-        deg = math.degrees(self.angle)
-        glRotatef(-deg, 0, 0, 1)
+        glMatrixMode(gl.GL_MODELVIEW)
 
         gluLookAt(self.pos[0], self.pos[1], 1.0,
                   self.pos[0], self.pos[1], -1.0,
-                  0.0, 1.0, 0.0) #move to target
+                  math.sin(-self.angle),
+                  math.cos(-self.angle),
+                  0.0
+                  ) #move to target
+        return
+        # rotate camera
+        glRotatef(-self._dangle, 0.0, 0.0, 1.0)
+        # move camera to position
+        glTranslatef(-self.pos[0], -self.pos[1], 0)
 
     def restore_transform(self):
         glPopMatrix()

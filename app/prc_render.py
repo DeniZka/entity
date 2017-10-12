@@ -24,6 +24,10 @@ class TextureRenderProcessor(Processor):
         Renderable.fat_point = FatPointOrderGroup(5)
 
         self.cam = None
+        self.width = 800
+        self.height = 600
+        self.hw = self.width * 0.5
+        self.hh = self.height * 0.5
 
         self.debug_draw = debug_draw
         self.debug_draw = debug_draw
@@ -35,8 +39,15 @@ class TextureRenderProcessor(Processor):
     def on_add(self, proc):
         if proc == self:
             self.sub_id = self.world.win_hnd.subscribe("on_draw", self.on_draw)
+            self.sub_id = self.world.win_hnd.subscribe("on_resize", self.on_resize)
         if proc.__class__ is CameraProcessor:
             self.cam = proc
+
+    def on_resize(self, width, height):
+        self.width = width
+        self.height = height
+        self.hw = self.width * 0.5
+        self.hh = self.height * 0.5
 
     def on_remove(self):
         self.world.win_hnd.unsubscribe("on_draw", self.sub_id)
@@ -44,25 +55,27 @@ class TextureRenderProcessor(Processor):
     def process(self, dt):
         for e, (tr, rend) in self.world.get_components(Transform, Renderable):
             if rend.modified:
-                rend.vertex_list.colors[:] = rend.colors
+                for vl in rend.vertex_list:
+                    vl.colors[:] = rend.colors
 
             if tr.modified(self.cam.zoom):
-                if rend.atype == GL_POINTS:
-                    rend.vertex_list.vertices[:] = [tr.g_pos.x, tr.g_pos.y]
-                    tr.redrawed()
-                elif rend.atype == GL_LINES:
-                    v1 = tr.g_pos
-                    v2 = tr.g_pos1
-                    rend.vertex_list.vertices[:] = [v1.x, v1.y, v2.x, v2.y]
+                for vl in rend.vertex_list:
+                    if rend.atype == GL_POINTS:
+                        vl.vertices[:] = [tr.g_pos.x, tr.g_pos.y]
+                        tr.redrawed()
+                #elif rend.atype == GL_LINES:
+                #    v1 = tr.g_pos
+                #    v2 = tr.g_pos1
+                #    rend.vertex_list.vertices[:] = [v1.x, v1.y, v2.x, v2.y]
                     # make tratsform unmodified
-                    tr.redrawed()
-                else:
-                    rend.vertex_list.vertices[:] = tr.vertixes(self.cam.zoom)
+                #    tr.redrawed()
+                #elif rend.atype == GL_QUADS:
+                #    rend.vertex_list.vertices[:] = tr.vertixes(self.cam.zoom)
 
-        for e, (tr, l) in self.world.get_components(Transform, Label):
-            if tr.modified:
-                l.x = int(tr.g_pos.x)
-                l.y = int(tr.g_pos.y)
+        #for e, (tr, l) in self.world.get_components(Transform, Label):
+        #    if tr.modified:
+        #        l.x = int(tr.g_pos.x)
+        #        l.y = int(tr.g_pos.y)
 
     def draw_texture(self, rend, entity):
         texture = rend.texture
@@ -73,6 +86,7 @@ class TextureRenderProcessor(Processor):
     def on_draw(self):
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+
 
         self.cam.apply_transform()
         #if self.debug_draw:
@@ -92,6 +106,7 @@ class TextureRenderProcessor(Processor):
 
         if self.debug_draw:
             self.fps_display.draw()
+
 
 
 class RendOrderGroup(OrderedGroup):
@@ -121,7 +136,7 @@ class FatPointOrderGroup(OrderedGroup):
         super().__init__(order, parent)
 
     def set_state(self):
-        glPointSize(4)
+        glPointSize(3)
 
     def unset_state(self):
         glPointSize(1)

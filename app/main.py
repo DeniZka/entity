@@ -41,8 +41,8 @@ def run(args=None):
 
     world.add_processor(factory)
     world.add_processor(inp_processor) #input first
-    world.add_processor(part_processor)
-    world.add_processor(phys_processor)
+    #world.add_processor(part_processor)
+    #world.add_processor(phys_processor)
     world.add_processor(render_processor) #after physiscs !
     world.add_processor(camera) #after physiscs !
     world.add_processor(edit_proc)
@@ -55,7 +55,7 @@ def run(args=None):
 
 
     #factory was added to processor so we can add come things into
-    factory.testing()
+    #factory.testing()
     factory.createEnv()
     factory.create_instance(Vec2d(200, 300))
     #player = factory.createPlayer(Vec2d(100,100))

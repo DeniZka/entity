@@ -1,13 +1,20 @@
 from pymunk import Vec2d
 
 from app.cmp import Component
+from pyglet.gl import *
+from pyglet.graphics import Group
+from pyglet.graphics import OrderedGroup
 
 
-class Transform(Component):
+class Transform(Group):
     """
-    check pre_ for to check it was updated
+    Hierarchical pyglet group to make object on object
     """
+    def on_remove(self): #dummy from Component
+        pass
+
     def __init__(self, pos, size=Vec2d(0, 0), angle=0, anchor=None):
+        super().__init__(parent=None)
         """
 
         :param pos: anchor point position
@@ -15,6 +22,7 @@ class Transform(Component):
         :param angle: angle in radians
         :param anchor: center of rotation and scaling
         """
+
         self._bb = [
             Vec2d(0, 0),  # min
             Vec2d(0, 0)   # max
@@ -39,10 +47,6 @@ class Transform(Component):
         self._pos[1] = pos + size
         if anchor:
             self._anchor = anchor
-        elif size.x > 0 or size.y > 0:
-            self._anchor = size * 0.5
-
-
         if pos:
             self._pos[0] = pos
 
@@ -131,8 +135,8 @@ class Transform(Component):
         """
         :return: global position calculated from the parents
         """
-        if self._parent:
-            return self._parent.g_pos + self._pos[0]
+        if self.parent:
+            return self.parent.g_pos + self._pos[0]
         else:
             return self._pos[0]
 
@@ -282,10 +286,13 @@ class Transform(Component):
         else:
             return self._size.y
 
+    """
     @property
     def parent(self):
         return self._parent
+    """
 
+    """
     @parent.setter
     def parent(self, val):
         if val:
@@ -294,6 +301,7 @@ class Transform(Component):
         else:
             if self._parent:
                 self._parent._childs.remove(self)
+    """
 
     def scale_to(self, des_wh):
         #TODO rescale
@@ -373,6 +381,16 @@ class Transform(Component):
         self._v[3].rotate(self._angle)
         self._v[3] = self._v[3] + self._ppos
 
+    def q_verts(self):
+        return [0, 0,
+                self._pos[1].x-self._pos[0].x, 0,
+                self._pos[1].x-self._pos[0].x, self._pos[1].y-self._pos[0].y,
+                0, self._pos[1].y-self._pos[0].y]
+
+    def l_verts(self):
+        return [0, 0,
+                self._pos[1].x-self._pos[0].x, self._pos[1].y-self._pos[0].y]
+
     def vertixes(self, zoom=None):
         if self.unzoomable:
             if self.last_cam_zoom != zoom or self._modified:
@@ -391,4 +409,30 @@ class Transform(Component):
             self._v[2].x + self._pos[0].x, self._v[2].y + self._pos[0].y,
             self._v[3].x + self._pos[0].x, self._v[3].y + self._pos[0].y
         ]
+
+    def set_state(self):
+        """
+        callback apply local transforamtions
+        :return:
+        """
+        glPushMatrix()
+
+        glTranslatef(self._pos[0].x, self._pos[0].y, 0.0)
+
+        glRotatef(self._angle, 0.0, 0.0, 1.0)
+
+        glTranslatef(-self._anchor.x, -self._anchor.y, 0.0)
+
+        glScalef(self._scale.x, self._scale.y, 0.0)
+
+
+
+
+    def unset_state(self):
+        """
+        callback restore from local transformation
+        :return:
+        """
+        glPopMatrix()
+
 

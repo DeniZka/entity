@@ -1,6 +1,7 @@
 import math
 
 import pyglet
+from pyglet.gl import *
 from pymunk import Vec2d
 
 from app.cmp_physics import Physics
@@ -18,6 +19,8 @@ class UIProcessor(Processor):
         self.win_coord = None
         self.scene_coord = None
         self.screen = None
+        self.w_width = 800
+        self.w_height = 600
         return
 
     def on_add(self, proc):
@@ -137,6 +140,10 @@ class UIProcessor(Processor):
         return
 
     def draw(self):
+        glMatrixMode(gl.GL_PROJECTION)
+        glLoadIdentity()
+        glOrtho(0, self.w_width, 0, self.w_height, -1, 1)
+        glMatrixMode(gl.GL_MODELVIEW)
         Renderable.ui_batch.draw()
         return
         self.vel.draw()

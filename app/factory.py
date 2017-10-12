@@ -4,6 +4,7 @@ from random import randint
 
 import pyglet
 from pyglet.gl import *
+from pyglet.graphics import Group
 import pymunk
 from pymunk import Vec2d
 
@@ -41,16 +42,20 @@ class Factory(Processor):
 
     def createEnv(self):
         self.environment = self.world.create_entity()  #first of all global entity for environment world
+        t = Transform(Vec2d(0, -20), Vec2d(7200, 20))
+        t.angle = 0
+        base = Renderable(group=t, verts=t.q_verts())
+        base.colors = [0, 200, 0, 255] * 4
+        self.world.add_component(self.environment, base)
+        self.world.add_component(self.environment, t)
+
+        return
+
         lines = [
             pymunk.Segment(Physics.space.static_body, Vec2d(0, 0), Vec2d(7200, 0), 10),
             pymunk.Segment(Physics.space.static_body, Vec2d(0, 0), Vec2d(0, 480), 2),
             pymunk.Segment(Physics.space.static_body, Vec2d(720, 0), Vec2d(720, 480), 6)
         ]
-
-        self.world.add_component(self.environment, Transform(Vec2d(7200/2, 0), Vec2d(7200, 20)))
-        base = Renderable()
-        base.colors = [0, 200, 0, 255] * 4
-        self.world.add_component(self.environment, base)
 
         for l in lines:
             l.friction = 0.5
@@ -246,7 +251,10 @@ class Factory(Processor):
     def create_switch(self, j, tr):
         ent = self.world.create_entity()
         # render comp
-        r = Renderable(self.texture_from_image("joint.png"))
+        im = pyglet.resource.image("joint.png")
+        tex = im.get_texture()
+
+        r = Renderable(tex)
         r.colors = [255, 0, 0, 255] * 4
         t = Transform(Vec2d(0, 0), Vec2d(10, 20))
         t.parent = tr
@@ -277,12 +285,11 @@ class Factory(Processor):
             b_ent = self.world.create_entity()
             b_j = Joint(b_ent)
             # transform
-            self.world.add_component(b_ent, Transform(v1, Vec2d(5, 5)))
-            # switch circle
-            #r = Renderable(self.texture_from_image("joint.png"))
-            #r.colors = [255, 0, 0, 255] * 4
+            t = Transform(v1, Vec2d(5, 5))
+            self.world.add_component(b_ent, t)
+            fat_point = FatPointGroup(t)
             r = Renderable(
-                group=Renderable.fat_point,
+                group=fat_point,
                 atype=GL_POINTS
             )
             r.colors = [255, 70, 70, 255]
@@ -297,10 +304,9 @@ class Factory(Processor):
             e_ent = self.world.create_entity()
             e_j = Joint(e_ent)
             tr2 = Transform(v2, Vec2d(5, 5))
-            #r = Renderable(self.texture_from_image("joint.png"))
-            #r.colors = [255, 0, 0, 255] * 4
+            fat_point = FatPointGroup(tr2)
             r = Renderable(
-                group=Renderable.fat_point,
+                group=fat_point,
                 atype=GL_POINTS
             )
             r.colors = [255, 70, 70, 255]
@@ -322,7 +328,7 @@ class Factory(Processor):
         tr._pos[0] = v1
         tr._pos[1] = v2
         self.world.add_component(ent, tr)
-        br = Renderable(atype=GL_LINES)
+        br = Renderable(atype=GL_LINES, group=tr, verts=tr.l_verts())
         if tag == "TrackSegment":
             br.colors = [000, 200, 0, 255] * 2
         elif tag == "HiddenSegment":
@@ -350,56 +356,31 @@ class Factory(Processor):
     """
 
     def create_instance(self, pos):
-        width = 150
+        width = 200
         height = 300
         # main body
         e = self.world.create_entity()
-        T = Transform(pos, Vec2d(width, height))  #main bounding sizes
-        T.anchor = Vec2d(0, 0)
         i = Instance()
-        r = Renderable()
+        T = Transform(Vec2d(0,200), Vec2d(width, height))  #main bounding sizes
+        T._anchor = Vec2d(0, 0)
+        T.angle = 0
+        r = Renderable(group=T, verts=T.q_verts())
         r.colors = [0, 0, 255, 100] * 4
         self.world.add_component(e, i)
         self.world.add_component(e, r)
         self.world.add_component(e, T)
 
         #top line
+        #"""
         e = self.world.create_entity()
-        r = Renderable(atype=GL_LINES)
-        r.colors = [255, 0, 0, 255] * 2
         t = Transform(Vec2d(0,0))
         t.pos1 = Vec2d(width, 0)
         t.parent = T
-        self.world.add_component(e, r)
-        self.world.add_component(e, t)
-
-        #left line
-        e = self.world.create_entity()
-        r = Renderable(atype=GL_LINES)
+        r = Renderable(group=t, atype=GL_LINES, verts=t.l_verts())
         r.colors = [255, 0, 0, 255] * 2
-        t = Transform(Vec2d(0,0))
-        t.pos1 = Vec2d(0, height)
-        t.parent = T
-        self.world.add_component(e, r)
-        self.world.add_component(e, t)
-
-        #right line
-        e = self.world.create_entity()
-        r = Renderable(atype=GL_LINES)
-        r.colors = [255, 0, 0, 255] * 2
-        t = Transform(Vec2d(width,0))
-        t.pos1 = Vec2d(width, height)
-        t.parent = T
-        self.world.add_component(e, r)
-        self.world.add_component(e, t)
-
-        #bottom line
-        e = self.world.create_entity()
-        r = Renderable(atype=GL_LINES)
-        r.colors = [255, 0, 0, 255] * 2
-        t = Transform(Vec2d(0, height))
-        t.pos1 = Vec2d(width, height)
-        t.parent = T
+        r.add_line([0,0,0,height])
+        r.add_line([width,0,width,height])
+        r.add_line([0,height,width,height])
         self.world.add_component(e, r)
         self.world.add_component(e, t)
 
@@ -411,23 +392,25 @@ class Factory(Processor):
         tr2 = Transform(pin_pos, Vec2d(10, 0))
         tr2.parent = T
         self.world.add_component(e_ent, tr2)
-        #r = Renderable(self.texture_from_image("joint.png"))
+        fat_line_g = FatLineGroup(parent=tr2)
         r = Renderable(
-            group=Renderable.fat_line,
-            atype=GL_LINES
+            #group=Renderable.fat_line,  #todo subgroup
+            group=fat_line_g,
+            atype=GL_LINES,
+            verts=tr2.l_verts()
         )
         r.colors = [0, 255, 0, 255] * 2
         self.world.add_component(e_ent, r)
 
         #joint label
         e = self.world.create_entity()
-        t = Transform(Vec2d(10, 0))
+        t = Transform(Vec2d(20, 0))
         t.parent = tr2
-        l = pyglet.text.Label(      #FIXME LOOKS LIKE PROBLEM THERE when zoooom
-            "Kind of pin",          # give a name
+        l = pyglet.text.Label(
+            "Kind of pin",
             font_size=8,
             batch=Renderable.batch, # will be batched by batch.draw()
-            group=Renderable.fg,     # on foreground z place
+            group=t,
             anchor_y="center"
 
         )
@@ -446,3 +429,26 @@ class Factory(Processor):
 
         #"""
         return
+
+
+
+class FatLineGroup(Group):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+    def set_state(self):
+        glLineWidth(4)
+
+    def unset_state(self):
+        glLineWidth(1)
+
+
+class FatPointGroup(Group):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+    def set_state(self):
+        glPointSize(3)
+
+    def unset_state(self):
+        glPointSize(1)
