@@ -5,6 +5,7 @@ from app.cmp_instance import Instance
 from app.cmp_joint import Joint
 from app.cmp_renderable import Renderable
 from app.cmp_transform import Transform
+from app.cmp_pin import Pin
 from app.factory import Factory
 from app.prc import Processor
 from app.prc_camera import CameraProcessor
@@ -27,7 +28,6 @@ class EditorProcessor(Processor):
         self.cam_rot_angle = 0
         self.en_snap = True       #instance items do not need in snapping
 
-
     def on_add(self, proc):
         if proc == self:
             self.cam = self.world.get_processor(CameraProcessor)
@@ -36,8 +36,6 @@ class EditorProcessor(Processor):
             self.world.win_hnd.subscribe("on_mouse_release", self.on_mouse_release)
         if proc.__class__ is CameraProcessor:
             self.cam = proc
-
-
 
     def contact_dist(self, pt1, pt2):
         """
@@ -78,17 +76,36 @@ class EditorProcessor(Processor):
             ret.append(sg_tr)
         return ret
 
+    def nearest(self, pos):
+        min_dist = 1000000
+        near_tr = None
+        for ent, tr in self.world.get_component(Transform):
+            has_jnt = self.world.has_component(ent, Joint)
+            has_pin = self.world.has_component(ent, Pin)
+            if not has_jnt and not has_pin:
+                continue
+            # except calc if tr is picked
+            if self.picked and tr == self.picked[0]:
+                continue
+            # except unpickable Transform child node
+            if self.picked is None and tr.parent and tr.parent.__class__ == Transform:
+                continue
+            sq_d = pos.get_dist_sqrd(tr.g_pos)
+            if sq_d < min_dist:
+                min_dist = sq_d
+                near_tr = tr
+        return near_tr
+
     def nearest_joint(self, pos):
         min_dist = 1000000
         near_tr = None
         near_jnt = None
-        # TODO FIXME: may be need an updatin delay for eficient
         for ent, (tr, jnt) in self.world.get_components(Transform, Joint):
             # except calc if tr is picked
             if self.picked and tr == self.picked[0]:
                 continue
-            # except unpickable child node
-            if self.picked is None and tr.parent:
+            # except unpickable Transform child node
+            if self.picked is None and tr.parent and tr.parent.__class__ == Transform:
                 continue
             sq_d = pos.get_dist_sqrd(tr.g_pos)
             if sq_d < min_dist:
@@ -144,12 +161,11 @@ class EditorProcessor(Processor):
             w = self.cam.to_world(scr_v)
             if self.en_snap:
                 #on move snap feature
-                near = self.nearest_joint(w)
-
-                if near[0]:
-                    scr_tr_v = self.cam.to_screen(near[0].g_pos)
+                near = self.nearest(w)
+                if near:
+                    scr_tr_v = self.cam.to_screen(near.g_pos)
                     if (scr_tr_v - scr_v).get_length_sqrd() < SQ_SNAP_DISTANCE:
-                        w = near[0].g_pos
+                        w = near.g_pos
 
             self.picked[0].x = w.x - self.picked_shift_v.x
             self.picked[0].y = w.y - self.picked_shift_v.y

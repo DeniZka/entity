@@ -1,4 +1,5 @@
 from pyglet.gl import *
+from pyglet.graphics import TextureGroup
 from pymunk import Vec2d
 
 from app.cmp import Component
@@ -27,7 +28,8 @@ class Renderable(Component):
         if group:
             parent = group
         if texture:
-            self.group = TextureBindGroup(texture, parent)
+            self.group = TextureGroup(texture, parent)
+            #self.group = TextureBindGroup(texture, parent)
         elif group:
             self.group = group
         else:
@@ -148,8 +150,8 @@ class Renderable(Component):
             return None
 
     def on_remove(self):
-        if self.vertex_list:
-            self.vertex_list.delete()
+        for vl in self.vertex_list:
+            vl.delete()
 
     def set_pos_lock(self, lock_st):
         self.pos_locked = lock_st
@@ -160,6 +162,7 @@ class Renderable(Component):
             self._colors[i] = int(self.sub_colors[i])
         self._modified = True
 
+"""
 # Code below cobbled together from
 # https://pyglet.readthedocs.org/en/latest/programming_guide/graphics.html#hierarchical-state
 # and pyglet.sprite.SpriteGroup
@@ -189,10 +192,6 @@ class TextureBindGroup(pyglet.graphics.Group):
         glEnable(self.texture.target)  # Fixed disappeared textures
         glBindTexture(GL_TEXTURE_2D, self.texture.id)
         glPushAttrib(GL_COLOR_BUFFER_BIT)
-        return
-        # this added globaly
-        glEnable(GL_BLEND)
-        glBlendFunc(self.blend_src, self.blend_dest)
 
     def unset_state(self):
         glPopAttrib()
@@ -210,3 +209,4 @@ class TextureBindGroup(pyglet.graphics.Group):
         return hash((id(self.parent),
                      self.texture.id, self.texture.target,
                      self.blend_src, self.blend_dest))
+"""

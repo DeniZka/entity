@@ -135,8 +135,8 @@ class Transform(Group):
         """
         :return: global position calculated from the parents
         """
-        if self.parent and self.parent is Transform:
-            return self.parent.g_pos + self._pos[0]
+        if self.parent and self.parent.__class__ == Transform:
+                return self.parent.g_pos + self._pos[0]
         else:
             return self._pos[0]
 

@@ -19,6 +19,7 @@ from app.cmp_renderable import Renderable
 from app.cmp_segment import Segment
 from app.cmp_temp_live import TempLive
 from app.cmp_transform import Transform
+from app.cmp_pin import Pin
 from app.prc import Processor
 
 
@@ -356,8 +357,8 @@ class Factory(Processor):
     """
 
     def create_instance(self, pos):
-        width = 200
-        height = 300
+        width = 250
+        height = 400
         # main body
         e = self.world.create_entity()
         i = Instance()
@@ -366,14 +367,13 @@ class Factory(Processor):
         T.angle = 0
         r = Renderable(group=T, verts=T.q_verts())
         r.colors = [0, 0, 255, 100]
-        for i in range(0, 1000):
-            r.add_quads([0+i*2, 0, width+i*2, 0, width+i*2, height+i, 0+i*3, height-3  ])
+        #for i in range(0, 1000):
+        #    r.add_quads([0+i*2, 0, width+i*2, 0, width+i*2, height+i, 0+i*3, height-3  ])
         self.world.add_component(e, i)
         self.world.add_component(e, r)
         self.world.add_component(e, T)
 
-        #top line
-        #"""
+        #around lines
         e = self.world.create_entity()
         t = Transform(Vec2d(0,0))
         t.pos1 = Vec2d(width, 0)
@@ -383,43 +383,116 @@ class Factory(Processor):
         r.add_line([0,0,0,height])
         r.add_line([width,0,width,height])
         r.add_line([0,height,width,height])
-        for i in range(0, 1000):
-            r.add_line([width+i*2, 0, width+i*2, height ])
+        #for i in range(0, 1000):
+        #    r.add_line([width+i*2, 0, width+i*2, height ])
         self.world.add_component(e, r)
         self.world.add_component(e, t)
 
-        #a pin joint
-        pin_pos = Vec2d(-10, 13)
-        e_ent = self.world.create_entity()
-        e_j = Joint(e_ent)
-        self.world.add_component(e_ent, e_j)
-        tr2 = Transform(pin_pos, Vec2d(10, 0))
-        tr2.parent = T
-        self.world.add_component(e_ent, tr2)
-        fat_line_g = FatLineGroup(parent=tr2)
-        r = Renderable(
-            #group=Renderable.fat_line,  #todo subgroup
-            group=fat_line_g,
-            #group=tr2,
-            atype=GL_LINES,
-            verts=tr2.l_verts()
-        )
-        r.colors = [0, 255, 0, 255]
-        self.world.add_component(e_ent, r)
-
-        #joint label
-        e = self.world.create_entity()
-        t = Transform(Vec2d(20, 0))
-        t.parent = tr2
+        #instance name
+        t = Transform(Vec2d(100,5))
+        t.parent = T
+        t.angle = 90
         l = pyglet.text.Label(
-            "Kind of pin",
+            "INSTANCE_NAME",
             font_size=8,
-            batch=Renderable.batch, # will be batched by batch.draw()
+            batch=Renderable.batch,  # will be batched by batch.draw()
             group=t,
             anchor_y="center"
         )
-        self.world.add_component(e, t)
-        self.world.add_component(e, l)
+
+        #instance type
+        t = Transform(Vec2d(115, 5))
+        t.parent = T
+        t.angle = 90
+        l = pyglet.text.Label(
+            "instance_type",
+            font_size=8,
+            batch=Renderable.batch,  # will be batched by batch.draw()
+            group=t,
+            anchor_y="center"
+        )
+
+        #left pins
+        for i in range(15):
+            #a pin joint
+            pin_pos = Vec2d(-10, 13+i*27)
+            e_ent = self.world.create_entity()
+            #e_j = Joint(e_ent)
+            e_j = Pin()
+            self.world.add_component(e_ent, e_j)
+            tr2 = Transform(pin_pos, Vec2d(10, 0))
+            tr2.parent = T
+            self.world.add_component(e_ent, tr2)
+            fat_line_g = FatLineGroup(parent=tr2)
+            r = Renderable(
+                #group=Renderable.fat_line,  #todo subgroup
+                group=fat_line_g,
+                #group=tr2,
+                atype=GL_LINES,
+                verts=tr2.l_verts()
+            )
+            r.colors = [0, 255, 0, 255]
+            self.world.add_component(e_ent, r)
+
+            #joint label
+            e = self.world.create_entity()
+            #this a bit faster
+            #t = Transform (Vec2d(pin_pos.x+20, pin_pos.y))
+            #t.parent = T
+            # this a bit comfortable
+            t = Transform(Vec2d(20, 0))
+            t.parent = tr2
+            l = pyglet.text.Label(
+                "InputPin_"+str(i),
+                font_size=8,
+                batch=Renderable.batch, # will be batched by batch.draw()
+                group=t,
+                anchor_y="center"
+            )
+            self.world.add_component(e, t)
+            self.world.add_component(e, l)
+
+        #right pins
+        for i in range(15):
+            #a pin joint
+            pin_pos = Vec2d(width+10, 13+i*27)
+            e_ent = self.world.create_entity()
+            #e_j = Joint(e_ent) move to Pin entity
+            e_j = Pin()
+            self.world.add_component(e_ent, e_j)
+            tr2 = Transform(pin_pos, Vec2d(-10, 0))
+            tr2.parent = T
+            self.world.add_component(e_ent, tr2)
+            fat_line_g = FatLineGroup(parent=tr2)
+            r = Renderable(
+                #group=Renderable.fat_line,  #todo subgroup
+                group=fat_line_g,
+                #group=tr2,
+                atype=GL_LINES,
+                verts=tr2.l_verts()
+            )
+            r.colors = [0, 255, 0, 255]
+            self.world.add_component(e_ent, r)
+
+            #joint label
+            e = self.world.create_entity()
+            #this a bit faster
+            #t = Transform (Vec2d(pin_pos.x-20, pin_pos.y))
+            #t.parent = T
+            #this a bit comfortable
+            t = Transform(Vec2d(-20, 0))
+            t.parent = tr2
+            l = pyglet.text.Label(
+                "OutPin_"+str(i),
+                font_size=8,
+                batch=Renderable.batch, # will be batched by batch.draw()
+                group=t,
+                anchor_y="center",
+                anchor_x="right"
+            )
+            self.world.add_component(e, t)
+            self.world.add_component(e, l)
+
 
     def process(self, dt):         #check died entity by ttl
         #"""

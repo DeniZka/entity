@@ -62,9 +62,9 @@ def run(args=None):
     #factory was added to processor so we can add come things into
     #factory.testing()
     #factory.createEnv()
-    for i in range(100):
+    for i in range(10):
         factory.create_instance(Vec2d(randint(0,10000), randint(0, 10000)))
-        #factory.create_instance(Vec2d(0, 0))
+    factory.create_instance(Vec2d(0, 0))
     #player = factory.createPlayer(Vec2d(100,100))
     #camera.target = player[1]
     #enemy = factory.createEnemy(Vec2d(100,250))
