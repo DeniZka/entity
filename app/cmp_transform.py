@@ -130,11 +130,29 @@ class Transform(Group):
             self._pos[0] = val
             self._set_modified()
 
+    @staticmethod
+    def recur_pos(tr):
+        if tr.parent is None:
+            # nothin upper
+            if tr.__class__ == Transform:
+                return tr.pos
+            else:
+                return Vec2d(0, 0)
+        else:
+            #return same parent transformation
+            #TODO calc angle and scale
+            return Transform.recur_pos(tr.parent) + tr.pos
+
+
+
+
     @property
     def g_pos(self):
         """
         :return: global position calculated from the parents
         """
+        return Transform.recur_pos(self)
+
         if self.parent and self.parent.__class__ == Transform:
                 return self.parent.g_pos + self._pos[0]
         else:
@@ -411,28 +429,13 @@ class Transform(Group):
         ]
 
     def set_state(self):
-        """
-        callback apply local transforamtions
-        :return:
-        """
+        # callback apply local transforamtions
         glPushMatrix()
-
         glTranslatef(self._pos[0].x, self._pos[0].y, 0.0)
-
         glRotatef(self._angle, 0.0, 0.0, 1.0)
-
         glTranslatef(-self._anchor.x, -self._anchor.y, 0.0)
-
         glScalef(self._scale.x, self._scale.y, 0.0)
 
-
-
-
     def unset_state(self):
-        """
-        callback restore from local transformation
-        :return:
-        """
+        # callback restore from local transformation
         glPopMatrix()
-
-

@@ -42,44 +42,44 @@ class Renderable(Component):
             if self.group.parent == Renderable.ui:
                 self.vertex_list.append(
                     Renderable.ui_batch.add(
-                    4, atype,
-                    self.group,
-                    vertex_format, 'c4B/static',
-                    ('t3f/static', texture.tex_coords)
+                        4, atype,
+                        self.group,
+                        vertex_format, 'c4B/static',
+                        ('t3f/static', texture.tex_coords)
                     )
                 )
             else:
                 self.vertex_list.append(
                     Renderable.batch.add(
-                    4, atype,
-                    self.group,
-                    vertex_format, 'c4B/static',
-                    ('t3f/static', texture.tex_coords)
+                        4, atype,
+                        self.group,
+                        vertex_format, 'c4B/static',
+                        ('t3f/static', texture.tex_coords)
                     )
                 )
         else:  # textureless
             if atype == GL_QUADS:
                 self.vertex_list.append (
                     Renderable.batch.add(
-                    4, atype,
-                    self.group,
-                    vertex_format, 'c4B/static'
+                        4, atype,
+                        self.group,
+                        vertex_format, 'c4B/static'
                     )
                 )
             elif atype == GL_LINES:
                 self.vertex_list.append(
                     Renderable.batch.add(
-                    2, atype,
-                    self.group,
-                    vertex_format, 'c4B/static'
+                        2, atype,
+                        self.group,
+                        vertex_format, 'c4B/static'
                     )
                 )
             elif atype == GL_POINTS:
                 self.vertex_list.append(
                     Renderable.batch.add(
-                    1, atype,
-                    self.group,
-                    vertex_format, 'c4B/static'
+                        1, atype,
+                        self.group,
+                        vertex_format, 'c4B/static'
                     )
                 )
             else:
@@ -89,7 +89,7 @@ class Renderable(Component):
         self._colors = [255, 255, 255, 255] * self.vertex_list[0].count
         self.sub_colors = self._colors
 
-        #set default vertex
+        # set default vertex
         if len(verts) < 1:
             return
 

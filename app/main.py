@@ -63,7 +63,8 @@ def run(args=None):
     #factory.testing()
     #factory.createEnv()
     for i in range(10):
-        factory.create_instance(Vec2d(randint(0,10000), randint(0, 10000)))
+        T = factory.create_instance(Vec2d(randint(0,10000), randint(0, 10000)))
+        #T.angle = randint(-90, 90)
     factory.create_instance(Vec2d(0, 0))
     #player = factory.createPlayer(Vec2d(100,100))
     #camera.target = player[1]

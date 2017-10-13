@@ -493,6 +493,8 @@ class Factory(Processor):
             self.world.add_component(e, t)
             self.world.add_component(e, l)
 
+        return T
+
 
     def process(self, dt):         #check died entity by ttl
         #"""
