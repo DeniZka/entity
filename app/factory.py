@@ -287,16 +287,9 @@ class Factory(Processor):
             b_j = Joint(b_ent)
             # transform
             t = Transform(v1, Vec2d(5, 5))
-            t.parent = Renderable.fat_point
             self.world.add_component(b_ent, t)
-            r = Renderable(
-                group=t,
-                atype=GL_POINTS,
-                verts=[0,0]
-            )
-            r.colors = [255, 70, 70, 255]
             self.world.add_component(b_ent, b_j)
-            self.world.add_component(b_ent, r)
+
 
         tr2 = None #will return last added for editor
         #joint entity for tail
@@ -306,18 +299,10 @@ class Factory(Processor):
             e_ent = self.world.create_entity()
             e_j = Joint(e_ent)
             tr2 = Transform(v2, Vec2d(5, 5))
-            tr2.parent = Renderable.fat_point
-            r = Renderable(
-                group=tr2,
-                atype=GL_POINTS,
-                verts=[0, 0]
-            )
-            r.colors = [255, 70, 70, 255]
             self.world.add_component(e_ent, tr2)
             self.world.add_component(e_ent, e_j)
-            self.world.add_component(e_ent, r)
 
-        s = Segment(ent, b_j.id, e_j.id, tag)
+        s = Segment(ent, v1, v2, b_j.id, e_j.id, tag)
         self.world.add_component(ent, s)
 
         #add segment ID in joints
@@ -325,11 +310,10 @@ class Factory(Processor):
         e_j.attach(ent)
 
         # create segment line
-        tr = Transform(v1)
-        tr._pos[0] = v1
-        tr._pos[1] = v2
-        self.world.add_component(ent, tr)
-        br = Renderable(atype=GL_LINES, group=tr, verts=tr.l_verts())
+        tr = Transform(v1)  # TODO REMOVE
+        verts = [v1.x, v1.y, v2.x, v2.y]
+        br = Renderable(atype=GL_LINES, verts=verts)
+        br.add_points(verts, color=[255, 70, 70, 255], group=Renderable.fat_point)
         if tag == "TrackSegment":
             br.colors = [000, 200, 0, 255]
         elif tag == "HiddenSegment":
@@ -341,7 +325,7 @@ class Factory(Processor):
         elif tag == "EESegment":
             br.colors = [200, 0, 200, 255]
         self.world.add_component(ent, br)
-        return (e_ent, e_j, [tr2, tr])
+        return (e_ent, e_j, [tr2, s])
 
     def texture_from_image(self, image_name):
         """Create a pyglet Texture from an image file"""

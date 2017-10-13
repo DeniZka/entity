@@ -6,6 +6,7 @@ from app.cmp_joint import Joint
 from app.cmp_renderable import Renderable
 from app.cmp_transform import Transform
 from app.cmp_pin import Pin
+from app.cmp_segment import Segment
 from app.factory import Factory
 from app.prc import Processor
 from app.prc_camera import CameraProcessor
@@ -70,10 +71,10 @@ class EditorProcessor(Processor):
         """
         ret = [tr]
         for sg_ent in jnt.ios:
-            sg_tr = self.world.component_for_entity(sg_ent, Transform)
+            sg = self.world.component_for_entity(sg_ent, Segment)
             # if not sg_tr.pick_pt_drag_id(tr.pos):
             #    print("Problem")
-            ret.append(sg_tr)
+            ret.append(sg)
         return ret
 
     def nearest(self, pos):

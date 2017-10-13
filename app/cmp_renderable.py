@@ -95,6 +95,19 @@ class Renderable(Component):
 
         self.vertex_list[0].vertices = verts
 
+    def add_points(self, v, color=[255, 255, 255, 255], group=None):
+        l = len(v) // 2
+        if group is None:
+            group = self.group
+        self.vertex_list.append(
+            Renderable.batch.add(
+                l, GL_POINTS,
+                group,
+                ('v2f/static', v),
+                ('c4B/static', color*l)
+            )
+        )
+
     def add_line(self, v):
         """
         single verticse list is NOT better then multiple lists  !!!

@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="27f74b7c-6d72-47a6-b249-1f19abb06714" name="Default" comment="recursive pos searching">
+    <list default="true" id="27f74b7c-6d72-47a6-b249-1f19abb06714" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/cmp_renderable.py" afterPath="$PROJECT_DIR$/app/cmp_renderable.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/cmp_transform.py" afterPath="$PROJECT_DIR$/app/cmp_transform.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/cmp_segment.py" afterPath="$PROJECT_DIR$/app/cmp_segment.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/factory.py" afterPath="$PROJECT_DIR$/app/factory.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/main.py" afterPath="$PROJECT_DIR$/app/main.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/prc_editor.py" afterPath="$PROJECT_DIR$/app/prc_editor.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/prc_render.py" afterPath="$PROJECT_DIR$/app/prc_render.py" />
     </list>
     <ignored path="Entity.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -28,8 +29,8 @@
       <file leaf-file-name="main.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="432">
-              <caret line="66" column="9" lean-forward="false" selection-start-line="66" selection-start-column="9" selection-end-line="66" selection-end-column="9" />
+            <state relative-caret-position="402">
+              <caret line="64" column="4" lean-forward="false" selection-start-line="64" selection-start-column="4" selection-end-line="64" selection-end-column="4" />
               <folding>
                 <element signature="e#0#13#0" expanded="true" />
               </folding>
@@ -37,29 +38,61 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="cmp_renderable.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="cmp_renderable.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/cmp_renderable.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-303">
-              <caret line="91" column="10" lean-forward="false" selection-start-line="91" selection-start-column="10" selection-end-line="91" selection-end-column="10" />
+            <state relative-caret-position="-1065">
+              <caret line="20" column="4" lean-forward="false" selection-start-line="20" selection-start-column="4" selection-end-line="20" selection-end-column="4" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="factory.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="factory.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/factory.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2982">
-              <caret line="495" column="16" lean-forward="false" selection-start-line="495" selection-start-column="16" selection-end-line="495" selection-end-column="16" />
+            <state relative-caret-position="174">
+              <caret line="289" column="0" lean-forward="false" selection-start-line="289" selection-start-column="0" selection-end-line="289" selection-end-column="0" />
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
                 <element signature="e#4219#5293#0" expanded="false" />
                 <element signature="e#5336#6625#0" expanded="false" />
                 <element signature="e#6668#7902#0" expanded="false" />
                 <element signature="e#7954#8895#0" expanded="false" />
-                <element signature="e#12005#12116#0" expanded="false" />
+                <element signature="e#11518#11629#0" expanded="false" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="prc_render.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/prc_render.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="546">
+              <caret line="155" column="0" lean-forward="false" selection-start-line="155" selection-start-column="0" selection-end-line="155" selection-end-column="0" />
+              <folding>
+                <element signature="e#0#11#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="world.py" pinned="false" current-in-tab="false">
+        <entry file="file:///usr/lib/python3.4/site-packages/esper/world.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="236">
+              <caret line="120" column="0" lean-forward="false" selection-start-line="120" selection-start-column="0" selection-end-line="120" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="cmp_segment.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/cmp_segment.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="237">
+              <caret line="22" column="0" lean-forward="false" selection-start-line="22" selection-start-column="0" selection-end-line="22" selection-end-column="0" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -67,8 +100,8 @@
       <file leaf-file-name="prc_editor.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/prc_editor.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-2043">
-              <caret line="30" column="0" lean-forward="false" selection-start-line="30" selection-start-column="0" selection-end-line="30" selection-end-column="0" />
+            <state relative-caret-position="285">
+              <caret line="76" column="25" lean-forward="true" selection-start-line="76" selection-start-column="25" selection-end-line="76" selection-end-column="25" />
               <folding>
                 <element signature="e#0#24#0" expanded="true" />
               </folding>
@@ -76,12 +109,17 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="cmp_hp.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/cmp_hp.py">
+      <file leaf-file-name="__init__.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/pyglet/graphics/__init__.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding />
+            <state relative-caret-position="251">
+              <caret line="551" column="16" lean-forward="true" selection-start-line="551" selection-start-column="16" selection-end-line="551" selection-end-column="16" />
+              <folding>
+                <element signature="e#6583#6596#0" expanded="true" />
+                <element signature="e#21727#23272#0" expanded="false" />
+                <element signature="e#23302#23425#0" expanded="false" />
+                <element signature="e#24746#26089#0" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -99,33 +137,11 @@
       <file leaf-file-name="cmp_transform.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/cmp_transform.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1038">
-              <caret line="277" column="51" lean-forward="true" selection-start-line="277" selection-start-column="17" selection-end-line="277" selection-end-column="51" />
+            <state relative-caret-position="372">
+              <caret line="86" column="0" lean-forward="false" selection-start-line="86" selection-start-column="0" selection-end-line="97" selection-end-column="19" />
               <folding>
                 <element signature="e#0#24#0" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="vertexdomain.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/pyglet/graphics/vertexdomain.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="561">
-              <caret line="296" column="18" lean-forward="false" selection-start-line="296" selection-start-column="12" selection-end-line="296" selection-end-column="18" />
-              <folding>
-                <element signature="e#2857#2870#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="vertexattribute.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/pyglet/graphics/vertexattribute.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="75">
-              <caret line="5" column="42" lean-forward="false" selection-start-line="5" selection-start-column="42" selection-end-line="5" selection-end-column="42" />
-              <folding />
             </state>
           </provider>
         </entry>
@@ -141,7 +157,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>class Batch</find>
       <find>VertexList</find>
       <find>class VertexList</find>
       <find>DrawOptions</find>
@@ -171,11 +186,11 @@
       <find>Joint</find>
       <find>nearest_joint</find>
       <find>angle</find>
+      <find>.pos</find>
     </findStrings>
     <replaceStrings>
       <replace>CameraProcessor</replace>
       <replace>self</replace>
-      <replace>._pos</replace>
       <replace>._pos2</replace>
       <replace>_angle</replace>
       <replace>rend</replace>
@@ -203,6 +218,7 @@
       <replace>near_pin</replace>
       <replace>pin</replace>
       <replace>Pin</replace>
+      <replace>._pos</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -216,7 +232,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/cmp_cannon.py" />
         <option value="$PROJECT_DIR$/cmp_hp.py" />
         <option value="$PROJECT_DIR$/cmp_input.py" />
         <option value="$PROJECT_DIR$/cmp_part_emiter.py" />
@@ -256,17 +271,18 @@
         <option value="$PROJECT_DIR$/pyglet/lib.py" />
         <option value="$PROJECT_DIR$/pyglet/resource.py" />
         <option value="$PROJECT_DIR$/pyglet/graphics/vertexbuffer.py" />
-        <option value="$PROJECT_DIR$/app/prc_render.py" />
         <option value="$PROJECT_DIR$/app/prc_ui.py" />
         <option value="$PROJECT_DIR$/profile.py" />
         <option value="$PROJECT_DIR$/log/profile.py" />
         <option value="$PROJECT_DIR$/pyglet/graphics/__init__.py" />
         <option value="$PROJECT_DIR$/app/cmp_pin.py" />
+        <option value="$PROJECT_DIR$/app/cmp_transform.py" />
+        <option value="$PROJECT_DIR$/app/cmp_segment.py" />
         <option value="$PROJECT_DIR$/app/prc_editor.py" />
         <option value="$PROJECT_DIR$/app/cmp_renderable.py" />
+        <option value="$PROJECT_DIR$/app/prc_render.py" />
         <option value="$PROJECT_DIR$/app/factory.py" />
         <option value="$PROJECT_DIR$/app/main.py" />
-        <option value="$PROJECT_DIR$/app/cmp_transform.py" />
       </list>
     </option>
   </component>
@@ -766,7 +782,14 @@
       <option name="project" value="LOCAL" />
       <updated>1507896859744</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="recursive pos searching">
+      <created>1507901027168</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1507901027168</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="TodoView" selected-index="4">
@@ -780,14 +803,15 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="27" width="1922" height="1177" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.16770834" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="TODO" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.23418319" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.23418319" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.8857413" sideWeight="0.34375" order="11" side_tool="true" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3286119" sideWeight="0.49583334" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32800752" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32945737" sideWeight="0.49687174" order="14" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.23984891" sideWeight="0.65625" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.23984891" sideWeight="0.65625" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.1408971" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32945737" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
@@ -850,6 +874,11 @@
           <line>552</line>
           <option name="timeStamp" value="466" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/app/prc_render.py</url>
+          <line>155</line>
+          <option name="timeStamp" value="490" />
+        </line-breakpoint>
       </breakpoints>
       <breakpoints-dialog>
         <breakpoints-dialog />
@@ -861,18 +890,11 @@
           </properties>
         </breakpoint>
       </default-breakpoints>
-      <option name="time" value="485" />
+      <option name="time" value="491" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/prc_partciles.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/cmp_instance.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -984,14 +1006,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="11" lean-forward="true" selection-start-line="0" selection-start-column="11" selection-end-line="0" selection-end-column="11" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///usr/lib/python3.4/site-packages/esper/world.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-330">
-          <caret line="244" column="0" lean-forward="true" selection-start-line="244" selection-start-column="0" selection-end-line="244" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -1126,34 +1140,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/prc_render.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="107" column="9" lean-forward="false" selection-start-line="107" selection-start-column="9" selection-end-line="107" selection-end-column="9" />
-          <folding>
-            <element signature="e#0#11#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/log/profile.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="90">
           <caret line="6" column="42" lean-forward="true" selection-start-line="6" selection-start-column="1" selection-end-line="6" selection-end-column="42" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pyglet/graphics/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="236">
-          <caret line="550" column="0" lean-forward="false" selection-start-line="550" selection-start-column="0" selection-end-line="550" selection-end-column="0" />
-          <folding>
-            <element signature="e#6583#6596#0" expanded="true" />
-            <element signature="e#21727#23272#0" expanded="false" />
-            <element signature="e#23302#23425#0" expanded="false" />
-            <element signature="e#24746#26089#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1233,30 +1224,84 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/prc_editor.py">
+    <entry file="file://$PROJECT_DIR$/app/cmp_transform.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2043">
-          <caret line="30" column="0" lean-forward="false" selection-start-line="30" selection-start-column="0" selection-end-line="30" selection-end-column="0" />
+        <state relative-caret-position="372">
+          <caret line="86" column="0" lean-forward="false" selection-start-line="86" selection-start-column="0" selection-end-line="97" selection-end-column="19" />
           <folding>
             <element signature="e#0#24#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/cmp_transform.py">
+    <entry file="file:///usr/lib/python3.4/site-packages/esper/world.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1038">
-          <caret line="277" column="51" lean-forward="true" selection-start-line="277" selection-start-column="17" selection-end-line="277" selection-end-column="51" />
+        <state relative-caret-position="236">
+          <caret line="120" column="0" lean-forward="false" selection-start-line="120" selection-start-column="0" selection-end-line="120" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pyglet/graphics/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="251">
+          <caret line="551" column="16" lean-forward="true" selection-start-line="551" selection-start-column="16" selection-end-line="551" selection-end-column="16" />
+          <folding>
+            <element signature="e#6583#6596#0" expanded="true" />
+            <element signature="e#21727#23272#0" expanded="false" />
+            <element signature="e#23302#23425#0" expanded="false" />
+            <element signature="e#24746#26089#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/prc_editor.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="285">
+          <caret line="76" column="25" lean-forward="true" selection-start-line="76" selection-start-column="25" selection-end-line="76" selection-end-column="25" />
           <folding>
             <element signature="e#0#24#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/cmp_segment.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="237">
+          <caret line="22" column="0" lean-forward="false" selection-start-line="22" selection-start-column="0" selection-end-line="22" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/prc_render.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="546">
+          <caret line="155" column="0" lean-forward="false" selection-start-line="155" selection-start-column="0" selection-end-line="155" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/factory.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="174">
+          <caret line="289" column="0" lean-forward="false" selection-start-line="289" selection-start-column="0" selection-end-line="289" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+            <element signature="e#4219#5293#0" expanded="false" />
+            <element signature="e#5336#6625#0" expanded="false" />
+            <element signature="e#6668#7902#0" expanded="false" />
+            <element signature="e#7954#8895#0" expanded="false" />
+            <element signature="e#11518#11629#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="432">
-          <caret line="66" column="9" lean-forward="false" selection-start-line="66" selection-start-column="9" selection-end-line="66" selection-end-column="9" />
+        <state relative-caret-position="402">
+          <caret line="64" column="4" lean-forward="false" selection-start-line="64" selection-start-column="4" selection-end-line="64" selection-end-column="4" />
           <folding>
             <element signature="e#0#13#0" expanded="true" />
           </folding>
@@ -1265,24 +1310,9 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/cmp_renderable.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-303">
-          <caret line="91" column="10" lean-forward="false" selection-start-line="91" selection-start-column="10" selection-end-line="91" selection-end-column="10" />
+        <state relative-caret-position="-1065">
+          <caret line="20" column="4" lean-forward="false" selection-start-line="20" selection-start-column="4" selection-end-line="20" selection-end-column="4" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/factory.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2982">
-          <caret line="495" column="16" lean-forward="false" selection-start-line="495" selection-start-column="16" selection-end-line="495" selection-end-column="16" />
-          <folding>
-            <element signature="e#0#11#0" expanded="true" />
-            <element signature="e#4219#5293#0" expanded="false" />
-            <element signature="e#5336#6625#0" expanded="false" />
-            <element signature="e#6668#7902#0" expanded="false" />
-            <element signature="e#7954#8895#0" expanded="false" />
-            <element signature="e#12005#12116#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>

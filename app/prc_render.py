@@ -1,12 +1,14 @@
 import time
 
 from pyglet.gl import *
+from pyglet.graphics import Group
 from pyglet.graphics import OrderedGroup
 from pymunk.pyglet_util import DrawOptions
 from pyglet.text import Label
 
 from app.cmp_renderable import Renderable
 from app.cmp_transform import Transform
+from app.cmp_segment import Segment
 from app.prc import Processor
 from app.prc_camera import CameraProcessor
 from app.prc_ui import UIProcessor
@@ -23,7 +25,7 @@ class TextureRenderProcessor(Processor):
         Renderable.fg = RendOrderGroup(2)
         Renderable.ui = RendOrderGroup(3)
         Renderable.fat_line = FatLineOrderGroup(4)
-        Renderable.fat_point = FatPointOrderGroup(5)
+        Renderable.fat_point = FatPointGroup()
 
         self.cam = None
         self.width = 800
@@ -63,6 +65,12 @@ class TextureRenderProcessor(Processor):
                     except:
                         print ("Entity rendering problem:", e)
                         exit()
+        for e, (seg, rend) in self.world.get_components(Segment, Renderable):
+            if seg.modified:
+                rend.vertex_list[0].vertices[:] = seg.vertices
+                rend.vertex_list[1].vertices[:] = seg.vertices
+                rend.vertex_list[0].colors[:] = rend.colors
+                #print(seg.vertices)
 
             #if tr.modified(self.cam.zoom):
                 #for vl in rend.vertex_list:
@@ -140,9 +148,9 @@ class FatLineOrderGroup(OrderedGroup):
         glLineWidth(1)
 
 
-class FatPointOrderGroup(OrderedGroup):
-    def __init__(self, order, parent=None):
-        super().__init__(order, parent)
+class FatPointGroup(Group):
+    def __init__(self, parent=None):
+        super().__init__(parent)
 
     def set_state(self):
         glPointSize(3)
